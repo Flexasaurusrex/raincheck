@@ -125,8 +125,8 @@
   .racetrack-wrap{display:flex;justify-content:center;margin-bottom:1.8rem}
   .racetrack{position:relative;width:300px;height:180px;margin:0 auto}
   .racetrack-border{position:absolute;inset:0;border:2px dashed rgba(200,98,42,0.2);border-radius:70px}
-  .rocky-runner{position:absolute;font-size:2.2rem;line-height:1;offset-path:path('M 70 0 L 230 0 Q 300 0 300 70 L 300 110 Q 300 180 230 180 L 70 180 Q 0 180 0 110 L 0 70 Q 0 0 70 0 Z');offset-distance:0%;animation:rockyLap 2.4s linear infinite;will-change:offset-distance}
-  @keyframes rockyLap{0%{offset-distance:0%}100%{offset-distance:100%}}
+  .rocky-runner{position:absolute;font-size:4rem;line-height:1;offset-path:path('M 70 0 L 230 0 Q 300 0 300 70 L 300 110 Q 300 180 230 180 L 70 180 Q 0 180 0 110 L 0 70 Q 0 0 70 0 Z');offset-distance:0%;animation:rockyLap 2.4s linear infinite;will-change:offset-distance}
+  @keyframes rockyLap{0%{offset-distance:100%}100%{offset-distance:0%}}
   .trail-item{position:absolute;font-size:1rem;opacity:0;pointer-events:none;animation:trailFade 1.2s ease-out forwards}
   @keyframes trailFade{0%{opacity:0.9;transform:scale(1.1)}100%{opacity:0;transform:scale(0.4) translateY(8px)}}
   .loading-label{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber-glow);animation:labelPulse 1.4s ease-in-out infinite;margin-bottom:1.2rem;display:none}
@@ -269,15 +269,26 @@
     </div>
 
     <div class="queue-empty" id="queue-empty">
-      <div class="racetrack-wrap">
-        <div class="racetrack" id="racetrack">
-          <div class="racetrack-border"></div>
-          <div class="rocky-runner" id="rocky-runner">🦝</div>
-        </div>
+
+      <!-- IDLE STATE -->
+      <div id="idle-state">
+        <div style="font-size:3.5rem;margin-bottom:1rem">🦝</div>
+        <div class="queue-empty-text">Rocky's ready.</div>
+        <div class="queue-empty-sub">Hit "Find Seattle Stories" to discover this week's picks.</div>
       </div>
-      <div class="loading-label" id="loading-label">Rocky is on it...</div>
-      <div class="queue-empty-text" id="empty-text">Rocky's ready.</div>
-      <div class="queue-empty-sub" id="empty-sub">Hit "Find Seattle Stories" to discover this week's picks.</div>
+
+      <!-- LOADING STATE (hidden until search starts) -->
+      <div id="loading-state" style="display:none">
+        <div class="racetrack-wrap">
+          <div class="racetrack" id="racetrack">
+            <div class="racetrack-border"></div>
+            <div class="rocky-runner" id="rocky-runner">🦝</div>
+          </div>
+        </div>
+        <div class="loading-label" id="loading-label">Rocky is on it...</div>
+        <div class="queue-empty-text" style="color:rgba(242,234,216,0.6)">Scanning Seattle...</div>
+      </div>
+
     </div>
 
   </div>
@@ -786,13 +797,10 @@ You're receiving this because you subscribed at raincheckseattle.xyz.<br/>Seattl
   let trailIdx = 0;
 
   function startRocky() {
-    const label  = document.getElementById('loading-label');
-    const etxt   = document.getElementById('empty-text');
-    const esub   = document.getElementById('empty-sub');
     const track  = document.getElementById('racetrack');
-    if (label) label.classList.add('visible');
-    if (etxt)  { etxt.textContent = 'Scanning Seattle...'; etxt.style.color = 'rgba(242,234,216,0.6)'; }
-    if (esub)  esub.style.opacity = '0';
+    document.getElementById('idle-state').style.display    = 'none';
+    document.getElementById('loading-state').style.display = 'block';
+    document.getElementById('loading-label').classList.add('visible');
 
     trailInterval = setInterval(() => {
       if (!track) return;
@@ -818,12 +826,8 @@ You're receiving this because you subscribed at raincheckseattle.xyz.<br/>Seattl
   function stopRocky() {
     clearInterval(trailInterval);
     trailInterval = null;
-    const label = document.getElementById('loading-label');
-    const etxt  = document.getElementById('empty-text');
-    const esub  = document.getElementById('empty-sub');
-    if (label) label.classList.remove('visible');
-    if (etxt)  { etxt.textContent = "Rocky's ready."; etxt.style.color = ''; }
-    if (esub)  esub.style.opacity = '';
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('idle-state').style.display    = 'block';
   }
 
   function setStatus(msg) {
