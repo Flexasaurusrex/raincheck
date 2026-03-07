@@ -68,6 +68,10 @@
   .btn-secondary:hover{background:rgba(200,98,42,0.25)}
   .btn-green{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:800;letter-spacing:0.13em;text-transform:uppercase;padding:0.65rem 1.4rem;border-radius:3px;cursor:pointer;background:rgba(74,158,110,0.15);border:1px solid rgba(74,158,110,0.4);color:#6fcf97;transition:background 0.2s}
   .btn-green:hover{background:rgba(74,158,110,0.3)}
+  .btn-publish{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:800;letter-spacing:0.13em;text-transform:uppercase;padding:0.65rem 1.4rem;border-radius:3px;cursor:pointer;background:rgba(138,172,181,0.12);border:1px solid rgba(138,172,181,0.3);color:var(--mist);transition:all 0.2s}
+  .btn-publish:hover{background:rgba(138,172,181,0.25);color:var(--cream)}
+  .btn-publish.publishing{opacity:0.6;cursor:not-allowed}
+  .btn-publish.published{background:rgba(74,158,110,0.2);border-color:rgba(74,158,110,0.5);color:#6fcf97}
 
   /* STATUS */
   .status-bar{background:rgba(200,98,42,0.08);border:1px solid rgba(200,98,42,0.2);border-radius:3px;padding:0.7rem 1rem;font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);display:none;align-items:center;gap:0.7rem;margin-bottom:1.5rem}
@@ -261,7 +265,8 @@
         <div class="queue-title">Story Queue</div>
         <div class="queue-meta">
           <div class="queue-count" id="queue-count">0 stories</div>
-          <button class="btn-green" onclick="exportJSON()">⬇ Export stories.json</button>
+          <button class="btn-green" onclick="exportJSON()">⬇ Export JSON</button>
+          <button class="btn-publish" id="btn-publish" onclick="pushToSite()">🚀 Push to Site</button>
           <button class="btn-primary" onclick="goToEmail()">Build Email →</button>
         </div>
       </div>
@@ -561,6 +566,44 @@
       image:    card.querySelector('.story-thumb img')?.src || '',
       image_placeholder: '📰'
     }));
+  }
+
+  // ── PUSH TO SITE ──
+  async function pushToSite() {
+    const stories = collectStories();
+    if (!stories.length) { showToast('No stories to push'); return; }
+
+    const btn    = document.getElementById('btn-publish');
+    const issue  = document.getElementById('issue-num')?.value || '001';
+    const weekOf = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+    btn.classList.add('publishing');
+    btn.textContent = '⏳ Publishing...';
+
+    try {
+      const res  = await fetch('/api/publish', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ token: getToken(), stories, issue, week_of: weekOf })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      btn.classList.remove('publishing');
+      btn.classList.add('published');
+      btn.textContent = '✓ Live!';
+      showToast('Site updated — live in ~15 seconds ✓', 'success');
+
+      // Reset button after 5s
+      setTimeout(() => {
+        btn.classList.remove('published');
+        btn.textContent = '🚀 Push to Site';
+      }, 5000);
+
+    } catch(e) {
+      btn.classList.remove('publishing');
+      btn.textContent = '🚀 Push to Site';
+      showToast('Publish failed: ' + e.message);
+    }
   }
 
   // ── EXPORT JSON ──
