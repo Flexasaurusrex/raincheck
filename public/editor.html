@@ -117,11 +117,21 @@
   .control-input::placeholder{color:rgba(138,172,181,0.4)}
   select.control-input option{background:var(--teal-deep);color:var(--cream)}
 
-  /* EMPTY STATE */
-  .queue-empty{text-align:center;padding:4rem 2rem;color:rgba(138,172,181,0.4)}
-  .queue-empty-icon{font-size:3rem;margin-bottom:1rem}
-  .queue-empty-text{font-family:'Alfa Slab One',serif;font-size:1.2rem;color:rgba(242,234,216,0.3);margin-bottom:0.5rem}
-  .queue-empty-sub{font-family:'Lora',serif;font-style:italic;font-size:0.83rem}
+  /* EMPTY / LOADING STATE */
+  .queue-empty{text-align:center;padding:3rem 2rem;color:rgba(138,172,181,0.4)}
+  .queue-empty-text{font-family:'Alfa Slab One',serif;font-size:1.2rem;color:rgba(242,234,216,0.3);margin-bottom:0.5rem;transition:all 0.3s}
+  .queue-empty-sub{font-family:'Lora',serif;font-style:italic;font-size:0.83rem;transition:all 0.3s}
+  /* RACETRACK */
+  .racetrack-wrap{display:flex;justify-content:center;margin-bottom:1.8rem}
+  .racetrack{position:relative;width:300px;height:180px;margin:0 auto}
+  .racetrack-border{position:absolute;inset:0;border:2px dashed rgba(200,98,42,0.2);border-radius:70px}
+  .rocky-runner{position:absolute;font-size:2.2rem;line-height:1;offset-path:path('M 70 0 L 230 0 Q 300 0 300 70 L 300 110 Q 300 180 230 180 L 70 180 Q 0 180 0 110 L 0 70 Q 0 0 70 0 Z');offset-distance:0%;animation:rockyLap 2.4s linear infinite;will-change:offset-distance}
+  @keyframes rockyLap{0%{offset-distance:0%}100%{offset-distance:100%}}
+  .trail-item{position:absolute;font-size:1rem;opacity:0;pointer-events:none;animation:trailFade 1.2s ease-out forwards}
+  @keyframes trailFade{0%{opacity:0.9;transform:scale(1.1)}100%{opacity:0;transform:scale(0.4) translateY(8px)}}
+  .loading-label{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber-glow);animation:labelPulse 1.4s ease-in-out infinite;margin-bottom:1.2rem;display:none}
+  .loading-label.visible{display:block}
+  @keyframes labelPulse{0%,100%{opacity:0.4}50%{opacity:1}}
 
   /* EMAIL PHASE */
   .email-phase-layout{display:grid;grid-template-columns:380px 1fr;gap:2rem;align-items:start}
@@ -259,9 +269,15 @@
     </div>
 
     <div class="queue-empty" id="queue-empty">
-      <div class="queue-empty-icon">🦝</div>
-      <div class="queue-empty-text">Rocky's ready.</div>
-      <div class="queue-empty-sub">Hit "Find Seattle Stories" to discover this week's picks.</div>
+      <div class="racetrack-wrap">
+        <div class="racetrack" id="racetrack">
+          <div class="racetrack-border"></div>
+          <div class="rocky-runner" id="rocky-runner">🦝</div>
+        </div>
+      </div>
+      <div class="loading-label" id="loading-label">Rocky is on it...</div>
+      <div class="queue-empty-text" id="empty-text">Rocky's ready.</div>
+      <div class="queue-empty-sub" id="empty-sub">Hit "Find Seattle Stories" to discover this week's picks.</div>
     </div>
 
   </div>
@@ -764,11 +780,61 @@ You're receiving this because you subscribed at raincheckseattle.xyz.<br/>Seattl
     const n = document.querySelectorAll('.story-card').length;
     document.getElementById('queue-count').textContent = n+(n===1?' story':' stories');
   }
+  // ── RACETRACK ANIMATION ──
+  let trailInterval = null;
+  const TRAIL = ['🍕','🌮','·','🍕','·','🌮','·'];
+  let trailIdx = 0;
+
+  function startRocky() {
+    const label  = document.getElementById('loading-label');
+    const etxt   = document.getElementById('empty-text');
+    const esub   = document.getElementById('empty-sub');
+    const track  = document.getElementById('racetrack');
+    if (label) label.classList.add('visible');
+    if (etxt)  { etxt.textContent = 'Scanning Seattle...'; etxt.style.color = 'rgba(242,234,216,0.6)'; }
+    if (esub)  esub.style.opacity = '0';
+
+    trailInterval = setInterval(() => {
+      if (!track) return;
+      const rocky = document.getElementById('rocky-runner');
+      if (!rocky) return;
+      // Get Rocky's current position via getBoundingClientRect relative to track
+      const tr = track.getBoundingClientRect();
+      const rr = rocky.getBoundingClientRect();
+      const x  = rr.left - tr.left + rr.width / 2;
+      const y  = rr.top  - tr.top  + rr.height / 2;
+      const dot = document.createElement('div');
+      dot.className = 'trail-item';
+      dot.textContent = TRAIL[trailIdx % TRAIL.length];
+      dot.style.left = (x - 10) + 'px';
+      dot.style.top  = (y - 10) + 'px';
+      dot.style.position = 'absolute';
+      track.appendChild(dot);
+      setTimeout(() => dot.remove(), 1300);
+      trailIdx++;
+    }, 280);
+  }
+
+  function stopRocky() {
+    clearInterval(trailInterval);
+    trailInterval = null;
+    const label = document.getElementById('loading-label');
+    const etxt  = document.getElementById('empty-text');
+    const esub  = document.getElementById('empty-sub');
+    if (label) label.classList.remove('visible');
+    if (etxt)  { etxt.textContent = "Rocky's ready."; etxt.style.color = ''; }
+    if (esub)  esub.style.opacity = '';
+  }
+
   function setStatus(msg) {
     document.getElementById('status-text').textContent = msg;
     document.getElementById('status-bar').classList.add('visible');
+    startRocky();
   }
-  function hideStatus() { document.getElementById('status-bar').classList.remove('visible'); }
+  function hideStatus() {
+    document.getElementById('status-bar').classList.remove('visible');
+    stopRocky();
+  }
   let tt;
   function showToast(msg,type='') {
     const t = document.getElementById('toast');
