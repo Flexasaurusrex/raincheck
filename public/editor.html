@@ -105,6 +105,8 @@
   .btn-edit:hover{background:rgba(200,98,42,0.25)}
   .btn-discard{background:rgba(192,57,43,0.1);border-color:rgba(192,57,43,0.3);color:#e07070}
   .btn-discard:hover{background:rgba(192,57,43,0.25)}
+  .btn-upload{background:rgba(138,172,181,0.1);border-color:rgba(138,172,181,0.3);color:var(--mist)}
+  .btn-upload:hover{background:rgba(138,172,181,0.25);color:var(--cream)}
   .story-content{padding:1rem 1.1rem 0.8rem;flex:1;display:flex;flex-direction:column}
   .story-headline{font-family:'Alfa Slab One',serif;font-size:1rem;color:var(--cream);line-height:1.25;margin-bottom:0.6rem}
   .story-body{font-family:'Lora',serif;font-size:0.82rem;line-height:1.7;color:var(--mist);flex:1}
@@ -207,6 +209,10 @@
       <div class="issue-row">
         <label>Issue #</label>
         <input type="text" id="issue-num" value="001" oninput="document.getElementById('issue-display').textContent='Issue #'+this.value" />
+        <label style="margin-left:1.2rem">Stories</label>
+        <select id="story-count" style="background:rgba(242,234,216,0.06);border:1px solid rgba(200,98,42,0.25);border-radius:3px;padding:0.4rem 0.7rem;color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;outline:none;cursor:pointer">
+          <option value="5" selected>5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        </select>
       </div>
       <div class="action-row">
         <button class="btn-primary" id="btn-find" onclick="findStories()">🔍 Find Seattle Stories</button>
@@ -451,7 +457,7 @@
     try {
       const res  = await fetch(API, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ action:'find_stories', token: getToken() })
+        body: JSON.stringify({ action:'find_stories', count: parseInt(document.getElementById('story-count').value)||5, token: getToken() })
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -504,6 +510,7 @@
         <div class="story-card-actions">
           <button class="btn-action btn-approve" onclick="approve('${id}')">✓ Approve</button>
           <button class="btn-action btn-edit"    onclick="edit('${id}')">Edit</button>
+          <button class="btn-action btn-upload"  onclick="uploadPhoto('${id}')" title="Swap image">📷</button>
           <button class="btn-action btn-discard" onclick="discard('${id}')">✕</button>
         </div>
       </div>
@@ -534,6 +541,33 @@
   }
   function setThumbFallback(id, emoji) {
     document.getElementById('thumb-' + id).innerHTML = `<div style="font-size:3rem;display:flex;align-items:center;justify-content:center;height:100%">${emoji}</div>`;
+  }
+
+  // ── UPLOAD PHOTO ──
+  function uploadPhoto(cardId) {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      const thumb = document.getElementById('thumb-' + cardId);
+      thumb.innerHTML = `<div class="thumb-loading"><div class="thumb-spinner"></div><span>Uploading...</span></div>`;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const res = await fetch(API, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'upload_image', imageData: e.target.result, filename: file.name, token: getToken() })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error);
+          thumb.innerHTML = `<img src="${data.url}" alt="thumbnail" />`;
+          showToast('Photo uploaded ✓', 'success');
+        } catch(err) { setThumbFallback(cardId, '🖼'); showToast('Upload failed: ' + err.message); }
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
   }
 
   // ── CARD ACTIONS ──
@@ -618,6 +652,49 @@
     showToast('stories.json downloaded → upload to public/ on GitHub ✓','success');
   }
 
+  // ── BUILD STORY BLOCKS (dynamic — handles 1–12 stories) ──
+  function buildStoryBlocks(stories) {
+    if (!stories.length) return '';
+    const si = (s) => s.image
+      ? `<img src="${s.image}" alt="${s.headline||''}" width="552" style="width:100%;height:auto;border-radius:3px;display:block;object-fit:cover;"/>`
+      : `<div style="width:100%;height:200px;background:#2a5560;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">${s.image_placeholder||'📰'}</div>`;
+    const di = (s) => s.image
+      ? `<img src="${s.image}" alt="" width="248" style="width:100%;height:160px;object-fit:cover;border-radius:3px;display:block;margin-bottom:10px;"/>`
+      : `<div style="width:100%;height:160px;background:#2a5560;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:10px;">${s.image_placeholder||'📰'}</div>`;
+    const ti = (s) => s.image
+      ? `<img src="${s.image}" alt="" width="100" style="width:100px;height:100px;object-fit:cover;border-radius:3px;display:block;"/>`
+      : `<div style="width:100px;height:100px;background:#2a5560;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${s.image_placeholder||'📰'}</div>`;
+    const divider = `<tr><td style="background-color:#1a3a3f;padding:0 24px;border-left:4px solid #c8622a;border-right:4px solid #c8622a;"><div style="border-top:1px solid rgba(200,98,42,0.15);"></div></td></tr>`;
+    let html = '';
+    // Story 0: hero
+    const h = stories[0];
+    html += `<tr><td style="background-color:#1a3a3f;padding:0;border-left:4px solid #c8622a;border-right:4px solid #c8622a;"><table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td style="padding:16px 24px 0;">${si(h)}</td></tr>
+<tr><td style="padding:14px 24px 0;"><span style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;background-color:rgba(200,98,42,0.2);border:1px solid rgba(200,98,42,0.4);color:#f0a060;padding:3px 8px;border-radius:2px;">${h.category}</span><span style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(138,172,181,0.6);margin-left:8px;">${h.location}</span></td></tr>
+<tr><td style="padding:10px 24px 0;"><div style="font-family:'Alfa Slab One',Georgia,serif;font-size:24px;font-weight:400;color:#f2ead8;line-height:1.2;">${h.headline}</div></td></tr>
+<tr><td style="padding:10px 24px 16px;"><div style="font-family:'Lora',Georgia,serif;font-size:15px;line-height:1.75;color:#8aacb5;">${h.body}</div></td></tr>
+<tr><td style="padding:0 24px;"><div style="border-top:1px solid rgba(200,98,42,0.15);"></div></td></tr>
+</table></td></tr>`;
+    // Remaining: pairs = two-column, lone last = thumbnail row
+    const rest = stories.slice(1);
+    for (let i = 0; i < rest.length; i += 2) {
+      const a = rest[i], b = rest[i + 1];
+      if (b) {
+        html += `<tr><td style="background-color:#1a3a3f;padding:0;border-left:4px solid #c8622a;border-right:4px solid #c8622a;"><table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+<td width="50%" valign="top" style="padding:20px 12px 20px 24px;border-right:1px solid rgba(200,98,42,0.15);">${di(a)}<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f0a060;margin-bottom:6px;">${a.category||''}</div><div style="font-family:'Alfa Slab One',Georgia,serif;font-size:17px;color:#f2ead8;line-height:1.25;margin-bottom:8px;">${a.headline||''}</div><div style="font-family:'Lora',Georgia,serif;font-size:13px;line-height:1.7;color:#8aacb5;">${a.body||''}</div><div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(138,172,181,0.5);margin-top:8px;">${a.location||''}</div></td>
+<td width="50%" valign="top" style="padding:20px 24px 20px 12px;">${di(b)}<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f0a060;margin-bottom:6px;">${b.category||''}</div><div style="font-family:'Alfa Slab One',Georgia,serif;font-size:17px;color:#f2ead8;line-height:1.25;margin-bottom:8px;">${b.headline||''}</div><div style="font-family:'Lora',Georgia,serif;font-size:13px;line-height:1.7;color:#8aacb5;">${b.body||''}</div><div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(138,172,181,0.5);margin-top:8px;">${b.location||''}</div></td>
+</tr></table></td></tr>`;
+      } else {
+        html += `<tr><td style="background-color:#1a3a3f;padding:18px 24px 24px;border-left:4px solid #c8622a;border-right:4px solid #c8622a;"><table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+<td width="100" valign="top" style="padding-right:14px;">${ti(a)}</td>
+<td valign="top"><div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f0a060;margin-bottom:5px;">${a.category||''} &nbsp;·&nbsp; <span style="color:rgba(138,172,181,0.6);">${a.location||''}</span></div><div style="font-family:'Alfa Slab One',Georgia,serif;font-size:17px;color:#f2ead8;line-height:1.25;margin-bottom:7px;">${a.headline||''}</div><div style="font-family:'Lora',Georgia,serif;font-size:13px;line-height:1.7;color:#8aacb5;">${a.body||''}</div></td>
+</tr></table></td></tr>`;
+      }
+      if (i + 2 < rest.length) html += divider;
+    }
+    return html;
+  }
+
   // ── BUILD EMAIL PREVIEW ──
   function buildEmailPreview() {
     const stories = collectStories();
@@ -634,16 +711,6 @@
     const adCta        = document.getElementById('e-ad-cta').value      || 'Learn More';
     const adUrl        = document.getElementById('e-ad-url').value      || '#';
 
-    const s = (i) => stories[i] || {};
-    const img = (story) => story.image
-      ? `<img src="${story.image}" alt="${story.headline||''}" width="552" style="width:100%;height:auto;border-radius:3px;display:block;object-fit:cover;" />`
-      : `<div style="width:100%;height:200px;background:#2a5560;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">${story.image_placeholder||'📰'}</div>`;
-    const img2 = (story) => story.image
-      ? `<img src="${story.image}" alt="" width="248" style="width:100%;height:160px;object-fit:cover;border-radius:3px;display:block;margin-bottom:10px;" />`
-      : `<div style="width:100%;height:160px;background:#2a5560;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:10px;">${story.image_placeholder||'📰'}</div>`;
-    const img3 = (story) => story.image
-      ? `<img src="${story.image}" alt="" width="100" style="width:100px;height:100px;object-fit:cover;border-radius:3px;display:block;" />`
-      : `<div style="width:100px;height:100px;background:#2a5560;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${story.image_placeholder||'📰'}</div>`;
 
     const html = `<!DOCTYPE html>
 <html><head>
@@ -698,59 +765,7 @@ body{margin:0!important;padding:0!important;width:100%!important;background:#e8e
 <span style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#c8622a;">✦ &nbsp; THIS WEEK'S PICKS</span>
 </td></tr></table></td></tr>
 
-<!-- STORY 1 HERO -->
-${stories[0] ? `<tr><td style="background-color:#1a3a3f;padding:0;border-left:4px solid #c8622a;border-right:4px solid #c8622a;">
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td style="padding:16px 24px 0;">${img(s(0))}</td></tr>
-<tr><td style="padding:14px 24px 0;">
-<span style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;background-color:rgba(200,98,42,0.2);border:1px solid rgba(200,98,42,0.4);color:#f0a060;padding:3px 8px;border-radius:2px;">${s(0).category}</span>
-<span style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(138,172,181,0.6);margin-left:8px;">${s(0).location}</span>
-</td></tr>
-<tr><td style="padding:10px 24px 0;"><div style="font-family:'Alfa Slab One',Georgia,serif;font-size:24px;font-weight:400;color:#f2ead8;line-height:1.2;">${s(0).headline}</div></td></tr>
-<tr><td style="padding:10px 24px 16px;"><div style="font-family:'Lora',Georgia,serif;font-size:15px;line-height:1.75;color:#8aacb5;">${s(0).body}</div></td></tr>
-<tr><td style="padding:0 24px;"><div style="border-top:1px solid rgba(200,98,42,0.15);"></div></td></tr>
-</table></td></tr>` : ''}
-
-<!-- STORIES 2 & 3 -->
-${(stories[1] || stories[2]) ? `<tr><td style="background-color:#1a3a3f;padding:0;border-left:4px solid #c8622a;border-right:4px solid #c8622a;">
-<table class="story-grid" role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-<td width="50%" valign="top" style="padding:20px 12px 20px 24px;border-right:1px solid rgba(200,98,42,0.15);">
-${img2(s(1))}<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f0a060;margin-bottom:6px;">${s(1).category||''}</div>
-<div style="font-family:'Alfa Slab One',Georgia,serif;font-size:17px;color:#f2ead8;line-height:1.25;margin-bottom:8px;">${s(1).headline||''}</div>
-<div style="font-family:'Lora',Georgia,serif;font-size:13px;line-height:1.7;color:#8aacb5;">${s(1).body||''}</div>
-<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(138,172,181,0.5);margin-top:8px;">${s(1).location||''}</div>
-</td>
-<td width="50%" valign="top" style="padding:20px 24px 20px 12px;">
-${img2(s(2))}<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f0a060;margin-bottom:6px;">${s(2).category||''}</div>
-<div style="font-family:'Alfa Slab One',Georgia,serif;font-size:17px;color:#f2ead8;line-height:1.25;margin-bottom:8px;">${s(2).headline||''}</div>
-<div style="font-family:'Lora',Georgia,serif;font-size:13px;line-height:1.7;color:#8aacb5;">${s(2).body||''}</div>
-<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(138,172,181,0.5);margin-top:8px;">${s(2).location||''}</div>
-</td></tr></table></td></tr>` : ''}
-
-<!-- DIVIDER -->
-<tr><td style="background-color:#1a3a3f;padding:0 24px;border-left:4px solid #c8622a;border-right:4px solid #c8622a;"><div style="border-top:1px solid rgba(200,98,42,0.15);"></div></td></tr>
-
-<!-- STORIES 4 & 5 -->
-${(stories[3] || stories[4]) ? `<tr><td style="background-color:#1a3a3f;padding:0;border-left:4px solid #c8622a;border-right:4px solid #c8622a;">
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-${stories[3] ? `<tr><td style="padding:18px 24px 0;">
-<table class="story-grid" role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-<td class="story-thumb-cell" width="100" valign="top" style="padding-right:14px;">${img3(s(3))}</td>
-<td valign="top">
-<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f0a060;margin-bottom:5px;">${s(3).category} &nbsp;·&nbsp; <span style="color:rgba(138,172,181,0.6);">${s(3).location}</span></div>
-<div style="font-family:'Alfa Slab One',Georgia,serif;font-size:17px;color:#f2ead8;line-height:1.25;margin-bottom:7px;">${s(3).headline}</div>
-<div style="font-family:'Lora',Georgia,serif;font-size:13px;line-height:1.7;color:#8aacb5;">${s(3).body}</div>
-</td></tr></table></td></tr>
-<tr><td style="padding:16px 24px 0;"><div style="border-top:1px solid rgba(200,98,42,0.1);"></div></td></tr>` : ''}
-${stories[4] ? `<tr><td style="padding:18px 24px 24px;">
-<table class="story-grid" role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-<td class="story-thumb-cell" width="100" valign="top" style="padding-right:14px;">${img3(s(4))}</td>
-<td valign="top">
-<div style="font-family:'Barlow Condensed',Arial,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#f0a060;margin-bottom:5px;">${s(4).category} &nbsp;·&nbsp; <span style="color:rgba(138,172,181,0.6);">${s(4).location}</span></div>
-<div style="font-family:'Alfa Slab One',Georgia,serif;font-size:17px;color:#f2ead8;line-height:1.25;margin-bottom:7px;">${s(4).headline}</div>
-<div style="font-family:'Lora',Georgia,serif;font-size:13px;line-height:1.7;color:#8aacb5;">${s(4).body}</div>
-</td></tr></table></td></tr>` : ''}
-</table></td></tr>` : ''}
+${buildStoryBlocks(stories)}
 
 <!-- AD SLOT -->
 ${adHeadline ? `<tr><td style="background-color:#0e1f22;padding:0;border-left:4px solid #c8622a;border-right:4px solid #c8622a;">

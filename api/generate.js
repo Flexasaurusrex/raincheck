@@ -28,9 +28,10 @@ export default async function handler(req, res) {
   if (!token || !isValidToken(token)) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
-    if (action === 'find_stories')   return await findSeattleStories(res);
+    if (action === 'find_stories')   return await findSeattleStories(res, req.body.count || 5);
     if (action === 'generate_story') return await generateStory(res, { topic, category, neighborhood, context });
     if (action === 'generate_image') return await generateImage(res, imagePrompt);
+    if (action === 'upload_image')   return await uploadUserImage(res, req.body.imageData, req.body.filename);
     return res.status(400).json({ error: 'Unknown action' });
   } catch (e) {
     console.error(e);
@@ -38,7 +39,7 @@ export default async function handler(req, res) {
   }
 }
 
-async function findSeattleStories(res) {
+async function findSeattleStories(res, count = 5) {
   const today = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -58,7 +59,7 @@ Write warm, witty, hyperlocal content based on REAL current Seattle events you f
 After searching, return ONLY a valid JSON array — no markdown, no backticks, no explanation.`,
       messages: [{
         role: 'user',
-        content: `Search for real things happening in Seattle this week and write 5 newsletter stories.
+        content: `Search for real things happening in Seattle this week and write ${count} newsletter stories.
 
 Return ONLY this JSON array:
 [
@@ -155,5 +156,16 @@ async function generateImage(res, imagePromptSubject) {
     contentType: 'image/png'
   });
 
+  return res.status(200).json({ url: blob.url });
+}
+
+async function uploadUserImage(res, base64Data, filename) {
+  if (!base64Data) throw new Error('No image data provided');
+  const clean = base64Data.replace(/^data:image\/\w+;base64,/, '');
+  const buffer = Buffer.from(clean, 'base64');
+  const ext = (filename?.split('.').pop() || 'jpg').toLowerCase().replace('jpeg','jpg');
+  const contentType = ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+  const blobName = `images/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const blob = await put(blobName, buffer, { access: 'public', contentType });
   return res.status(200).json({ url: blob.url });
 }
