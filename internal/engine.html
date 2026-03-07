@@ -319,7 +319,6 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
   }
-
   /* TOAST */
   .toast {
     position:fixed; bottom:2rem; right:2rem;
@@ -466,9 +465,12 @@
     <div id="queue-wrap" style="display:none;flex-direction:column;gap:2rem;">
       <div class="queue-header">
         <div class="queue-title">Story Queue</div>
-        <div class="queue-count" id="queue-count">0 stories</div>
+        <div style="display:flex;align-items:center;gap:0.8rem;">
+          <div class="queue-count" id="queue-count">0 stories</div>
+          <button onclick="exportToSite()" style="font-family:'Barlow Condensed',sans-serif;font-size:0.68rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;padding:0.3rem 0.9rem;border-radius:2px;cursor:pointer;border:1px solid rgba(74,158,110,0.5);background:rgba(74,158,110,0.15);color:#6fcf97;transition:background 0.2s;" onmouseover="this.style.background='rgba(74,158,110,0.3)'" onmouseout="this.style.background='rgba(74,158,110,0.15)'">⬇ Export stories.json</button>
+        </div>
       </div>
-      <div id="story-queue" style="display:flex;flex-direction:column;gap:1.5rem;"></div>
+      <div id="story-queue"></div>
     </div>
 
   </div>
@@ -727,13 +729,48 @@ Return only the JSON object, no markdown, no backticks.`
     }
   }
 
-  function discardStory(id) {
-    const card = document.getElementById(id);
-    card.style.transition = 'opacity 0.3s, transform 0.3s';
-    card.style.opacity = '0';
-    card.style.transform = 'translateX(-20px)';
-    setTimeout(() => { card.remove(); updateCount(); }, 320);
-    showToast('Story discarded');
+  function exportToSite() {
+    const cards = document.querySelectorAll('.story-card');
+    if (cards.length === 0) { showToast('No stories to export yet'); return; }
+
+    const stories = [];
+    cards.forEach((card, i) => {
+      const headlineEl = card.querySelector('[id^="headline-"]');
+      const bodyEl     = card.querySelector('[id^="body-"]');
+      const locEl      = card.querySelector('[id^="loc-"]');
+      const catEl      = card.querySelector('.story-cat-badge');
+      const thumbEl    = card.querySelector('.story-thumb img');
+
+      stories.push({
+        id: 'story-' + String(i + 1).padStart(3, '0'),
+        hero: i === 0,
+        category: catEl ? catEl.textContent.trim() : '',
+        headline: headlineEl ? headlineEl.textContent.trim() : '',
+        body:     bodyEl     ? bodyEl.textContent.trim()     : '',
+        location: locEl      ? locEl.textContent.trim()      : 'Seattle',
+        image:    thumbEl    ? thumbEl.src                   : '',
+        image_placeholder: '📰'
+      });
+    });
+
+    // Get week string — default to current date
+    const now = new Date();
+    const weekOf = now.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+
+    const output = {
+      issue: document.getElementById('issue-num') ? document.getElementById('issue-num').value || '001' : '001',
+      week_of: weekOf,
+      stories
+    };
+
+    const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'stories.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('stories.json downloaded — upload to public/ on GitHub ✓', 'success');
   }
 </script>
 </body>
