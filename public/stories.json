@@ -10,7 +10,9 @@
       "body": "Emerald City Comic Con returns to the Seattle Convention Center from Thursday, March 5 to Sunday, March 8, featuring notable screen legends and comic royalty. This year's guests of honor include comic book legend Chris Claremont, Doctor Who's David Tennant, and Star Wars' Hayden Christensen.",
       "location": "Downtown · March 5-8",
       "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885736458-w3ilvswa40k-xJTIFn7gG1uxnRgtb8GEgatrBrR2st.png",
-      "image_placeholder": "📰"
+      "image_placeholder": "📰",
+      "link": "https://www.emeraldcitycomiccon.com/",
+      "tickets_link": "https://www.emeraldcitycomiccon.com/attend/tickets/"
     },
     {
       "id": "story-002",
@@ -20,7 +22,10 @@
       "body": "The Mariners will face off against the Cleveland Guardians for the home opener on Thursday, March 26, followed by three additional back-to-back games. This marks the 50th season in franchise history and their 27th full season at T-Mobile Park.",
       "location": "SoDo · March 26",
       "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885735235-k5g552mcxp-Qry3qlalnHPYorTx2QEHZgYBcKnDv9.png",
-      "image_placeholder": "📰"
+      "image_placeholder": "📰",
+      "link": "https://www.mlb.com/mariners/schedule",
+      "tickets_link": "https://www.mlb.com/mariners/tickets",
+      "maps_link": "https://maps.google.com/?q=T-Mobile+Park+Seattle"
     },
     {
       "id": "story-003",
@@ -30,7 +35,9 @@
       "body": "Patrick's Irish Festival has remained the beating heart of Seattle's St. Patrick's Day celebrations, hosted at the historic Butterworth Building near Pike Place. This year features daily live performances from folk ballads to Celtic rock, plus rugby watch parties and parade festivities.",
       "location": "Pike Place Market · March 6-17",
       "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885731929-m1w5rpmieji-IqJrfFRWplJPLILvYh1tcY1flZLwoq.png",
-      "image_placeholder": "📰"
+      "image_placeholder": "📰",
+      "link": "https://www.kellsirish.com/seattle/",
+      "maps_link": "https://maps.google.com/?q=Kells+Irish+Restaurant+Seattle"
     },
     {
       "id": "story-004",
@@ -40,7 +47,9 @@
       "body": "The annual full-blown wine convention returns in a flurry of tasting pours and chef-made bites, featuring unlimited tastings from over 200 wineries and 75 restaurants. Tickets include live cooking demos, hands-on crafts, and bingo games on the side.",
       "location": "SoDo · March 21-22",
       "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885731263-z4lsfi7tr5g-R5LvcE0LfomLM93zUNWszA2fBBhjNL.png",
-      "image_placeholder": "📰"
+      "image_placeholder": "📰",
+      "link": "https://tastewashington.org/",
+      "tickets_link": "https://tastewashington.org/attend/"
     },
     {
       "id": "story-005",
@@ -50,7 +59,8 @@
       "body": "Sound, movement, and cultural pride define this year's Balkan Night Northwest, the region's biggest Balkan music and dance event. This annual celebration packs out three stages with nonstop tunes and steps from Albania, Bulgaria, Serbia, and beyond.",
       "location": "Various Locations · March 14",
       "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885739366-y86ikvzfbfi-aXCuiaoBLtJh9L1ESjG9VcpjiAlzgW.png",
-      "image_placeholder": "📰"
+      "image_placeholder": "📰",
+      "link": "https://balkannightnorthwest.com/"
     }
   ]
 }

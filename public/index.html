@@ -105,6 +105,8 @@
   .card--hero .card-title { font-size:1.4rem; line-height:1.25; }
   .card-body { font-family:'Lora',serif; font-size:0.83rem; line-height:1.7; color:var(--mist); }
   .card-loc { font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.42); margin-top:0.7rem; }
+  .card-explore { font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amber); margin-top:0.5rem; opacity:0; transition:opacity 0.2s; }
+  .card:hover .card-explore { opacity:1; }
   .mascot-band { background:var(--ink); border-top:2px solid rgba(200,98,42,0.25); border-bottom:2px solid rgba(200,98,42,0.25); padding:4rem 3rem; display:grid; grid-template-columns:auto 1fr; gap:4rem; align-items:center; position:relative; overflow:hidden; }
   .mascot-band::before { display:none; }
   .mascot-watermark { position:absolute; right:-1rem; bottom:-4rem; opacity:0.035; pointer-events:none; width:320px; height:320px; border-radius:50%; object-fit:cover; filter:grayscale(1); }
@@ -404,6 +406,7 @@
         const imgContent = story.image
           ? `<img src="${story.image}" alt="${story.headline}" />`
           : `<div class="card-img-placeholder">${story.image_placeholder || '📰'}</div>`;
+        const hasLinks = story.link || story.tickets_link || story.maps_link;
         card.innerHTML = `
           <div class="card-bar"></div>
           <div class="card-img-wrap">${imgContent}</div>
@@ -412,6 +415,7 @@
             <h3 class="card-title">${story.headline}</h3>
             <p class="card-body">${story.body}</p>
             <div class="card-loc">${story.location}</div>
+            ${hasLinks ? '<div class="card-explore">More info →</div>' : ''}
           </div>`;
         card.addEventListener('click', () => openModal(story));
         grid.appendChild(card);
