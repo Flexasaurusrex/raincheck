@@ -1,56 +1,56 @@
 {
   "issue": "001",
-  "week_of": "March 9, 2026",
+  "week_of": "March 7, 2026",
   "stories": [
     {
       "id": "story-001",
       "hero": true,
       "category": "🍜 Food & Drink",
-      "headline": "Tanaka Bros just opened their ramen counter in Capitol Hill — and the line is already wrapping the block",
-      "body": "The duo behind Westlake's beloved izakaya finally opened their standalone ramen spot on Pine. Early reports say the tonkotsu is the real deal. Counter service only, cash preferred, opens at 11am. Go early or go hungry.",
-      "location": "Capitol Hill · Tue–Sun",
-      "image": "",
-      "image_placeholder": "🍜"
+      "headline": "St Patrick's Festival Serves Celtic Feasts at Pike Place",
+      "body": "Kells Irish Restaurant transforms into a 12-day Celtic celebration at Pike Place Market with traditional fare, live folk ballads, and rugby watch parties. Daily performances run through March 17th. Meanwhile, Brazilian chef Emme Collins is set to debut Baiana at Pike Place in early March, serving acarajé and moqueca from her competition-winning kitchen.",
+      "location": "Pike Place Market · March 6-17",
+      "image": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-qhLMoeI9RuFNduKPzvqEg3NR/user-6J52ko39JJC1CuB5cJkeHEri/img-YR4e0C4ZvsbpnS1I6GFTJcii.png?st=2026-03-07T09%3A31%3A43Z&se=2026-03-07T11%3A31%3A43Z&sp=r&sv=2026-02-06&sr=b&rscd=inline&rsct=image/png&skoid=0ec745ad-3d9b-4d43-86db-87a2c9b420f1&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-03-07T06%3A46%3A23Z&ske=2026-03-08T06%3A46%3A23Z&sks=b&skv=2026-02-06&sig=SGN7qjITEJQPihCDh8b8ZJ32g6G4n8hJEYdtyC07SIQ%3D",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-002",
       "hero": false,
       "category": "🎵 Music",
-      "headline": "Neumos hosts a rare all-local lineup this Friday",
-      "body": "Five Seattle acts, $12 at the door. The kind of night you'll tell people about.",
-      "location": "Fri Mar 13 · Capitol Hill",
-      "image": "",
-      "image_placeholder": "🎵"
+      "headline": "High School Jazz Bands Take Center Stage Downtown",
+      "body": "Top jazz bands from five local high schools perform at Hot Java Cool Jazz in The Paramount Theatre. See Her Be Her returns for International Women's Day with panels on women in electronic music, plus a nighttime dance party headlined by BEXXIE.",
+      "location": "Various venues · March 8-9",
+      "image": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-qhLMoeI9RuFNduKPzvqEg3NR/user-6J52ko39JJC1CuB5cJkeHEri/img-OUK9w4dgIPaSqRytZEbbbuTs.png?st=2026-03-07T09%3A31%3A39Z&se=2026-03-07T11%3A31%3A39Z&sp=r&sv=2026-02-06&sr=b&rscd=inline&rsct=image/png&skoid=e12db1aa-1007-44fd-8388-3a70fd6a4956&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-03-06T12%3A04%3A59Z&ske=2026-03-07T12%3A04%3A59Z&sks=b&skv=2026-02-06&sig=a2lVLN/hammGTEZECcvvTavJS6TYNvHRSvWtcHE83ow%3D",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-003",
       "hero": false,
       "category": "🌸 Outdoors",
-      "headline": "The cherry blossoms at UW are peaking early this year",
-      "body": "Go this weekend. Seriously. They'll be gone by Tuesday.",
-      "location": "This Weekend · UW Campus",
-      "image": "",
-      "image_placeholder": "🌸"
+      "headline": "Spring Adventure Fair Welcomes Hiking Season",
+      "body": "Spring Into Adventure kicks off outdoor season at Lake Sammamish State Park on March 28th. The Snohomish Wine Festival at Thomas Family Farm offers tastings and vineyard tours on March 7th. Perfect timing as Seattle shakes off winter hibernation.",
+      "location": "Issaquah & Snohomish · March 7 & 28",
+      "image": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-qhLMoeI9RuFNduKPzvqEg3NR/user-6J52ko39JJC1CuB5cJkeHEri/img-pZvlQGwG8YGPSjHjU5BXQSPv.png?st=2026-03-07T09%3A31%3A42Z&se=2026-03-07T11%3A31%3A42Z&sp=r&sv=2026-02-06&sr=b&rscd=inline&rsct=image/png&skoid=c4071b20-fbe5-4cbe-8e48-4476b70c6a90&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-03-06T18%3A44%3A12Z&ske=2026-03-07T18%3A44%3A12Z&sks=b&skv=2026-02-06&sig=rncFDhnQyP0%2BEg3GzGZWYndKaIhXXLeMJJRFicPPR8k%3D",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-004",
       "hero": false,
       "category": "🎨 Arts & Culture",
-      "headline": "SAM's new Pacific Northwest retrospective opens Saturday",
-      "body": "Free admission opening weekend. Locals-only preview Friday night with RSVP.",
-      "location": "Sat Mar 14 · Downtown",
-      "image": "",
-      "image_placeholder": "🎨"
+      "headline": "Comic Con Costume Parade Invades Convention Center",
+      "body": "Emerald City Comic Con encourages attendees to wear costumes for this giant comics, anime, and pop culture event at Seattle Convention Center. Even non-attendees enjoy watching the colorful costumed fans walking downtown sidewalks.",
+      "location": "Downtown · March dates TBD",
+      "image": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-qhLMoeI9RuFNduKPzvqEg3NR/user-6J52ko39JJC1CuB5cJkeHEri/img-vb4bPdRX5KOb90frU61L0aLl.png?st=2026-03-07T09%3A31%3A44Z&se=2026-03-07T11%3A31%3A44Z&sp=r&sv=2026-02-06&sr=b&rscd=inline&rsct=image/png&skoid=52f8f7b3-ca8d-4b21-9807-8b9df114d84c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-03-07T05%3A01%3A29Z&ske=2026-03-08T05%3A01%3A29Z&sks=b&skv=2026-02-06&sig=zx4jI2/zFgkIowQKVvX69LxPV%2B0OXI2X1wAEWATJmis%3D",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-005",
       "hero": false,
       "category": "🏪 New Opening",
-      "headline": "Ballard's newest bookshop-café hybrid opens its doors",
-      "body": "Good espresso, used books, no wi-fi by design. Exactly what we needed.",
-      "location": "Now Open · Ballard",
-      "image": "",
-      "image_placeholder": "🏪"
+      "headline": "Secret Burger Kitchen Sneaks Into Kirkland",
+      "body": "Originally hidden inside a Tacoma hotel, Secret Burger Kitchen opens its second location in Kirkland's Juanita Village this March. The smashburger specialist brings their covert culinary operations across the lake.",
+      "location": "Kirkland · March opening",
+      "image": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-qhLMoeI9RuFNduKPzvqEg3NR/user-6J52ko39JJC1CuB5cJkeHEri/img-wHDfbfqkARBgcmgEbHnarb2f.png?st=2026-03-07T09%3A31%3A45Z&se=2026-03-07T11%3A31%3A45Z&sp=r&sv=2026-02-06&sr=b&rscd=inline&rsct=image/png&skoid=c4071b20-fbe5-4cbe-8e48-4476b70c6a90&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-03-06T13%3A44%3A23Z&ske=2026-03-07T13%3A44%3A23Z&sks=b&skv=2026-02-06&sig=bYXKdyyfL2vtsz/OVGrY6SaE/iFy9DjN/FHcjtdqDeQ%3D",
+      "image_placeholder": "📰"
     }
   ]
 }
