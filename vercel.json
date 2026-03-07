@@ -1,9 +1,7 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "rewrites": [
-    { "source": "/editor",  "destination": "/public/editor.html" },
-    { "source": "/about",   "destination": "/public/about.html" },
-    { "source": "/archive", "destination": "/public/archive.html" },
     { "source": "/((?!api/).*)", "destination": "/public/$1" }
   ]
 }
