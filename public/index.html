@@ -55,7 +55,7 @@
     border-bottom: 2px solid rgba(200,98,42,0.3);
   }
   .nav-logo { display:flex; align-items:center; gap:0.5rem; }
-  .nav-raccoon { width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.15); flex-shrink:0; }
+  .nav-raccoon { width:38px; height:38px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); flex-shrink:0; overflow:hidden; }
   .nav-logo-text { font-family:'Alfa Slab One',serif; font-size:1.4rem; color:var(--cream); text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
   .nav-links { display:flex; gap:2.5rem; list-style:none; }
   .nav-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.82rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
@@ -147,7 +147,6 @@
   .proof-num { font-family:'Alfa Slab One',serif; font-size:1.8rem; color:var(--cream); line-height:1; }
   .proof-label { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); margin-top:0.2rem; }
 
-  /* Right side: banner image displayed prominently */
   .hero-right {
     position: relative; z-index: 5;
     height: 100vh; display:flex; align-items:center; justify-content:center;
@@ -195,18 +194,15 @@
   .card:hover { background:#356070; }
   .card--hero { grid-column:span 2; }
 
-  /* Square image top of every card */
   .card-img-wrap { position:relative; width:100%; padding-top:100%; overflow:hidden; background:var(--ink); flex-shrink:0; }
   .card--hero .card-img-wrap { padding-top:50%; }
   .card-img-wrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform 0.4s ease; }
   .card:hover .card-img-wrap img { transform:scale(1.04); }
   .card-img-placeholder { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3rem; background:var(--teal-deep); }
 
-  /* Amber bar on hover */
   .card-bar { position:absolute; top:0; left:0; width:100%; height:3px; background:var(--amber); transform:scaleX(0); transform-origin:left; transition:transform 0.25s ease; z-index:2; }
   .card:hover .card-bar { transform:scaleX(1); }
 
-  /* Text below image */
   .card-text { padding:1.2rem 1.4rem 2.2rem; flex:1; display:flex; flex-direction:column; }
   .card--hero .card-text { padding:1.4rem 1.8rem 2.4rem; }
   .card-cat { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:800; letter-spacing:0.2em; text-transform:uppercase; color:var(--amber-glow); margin-bottom:0.5rem; }
@@ -222,8 +218,8 @@
   }
   .mascot-band::before { display:none; }
   .mascot-watermark { position:absolute; font-size:20rem; right:-1rem; bottom:-4rem; opacity:0.035; line-height:1; pointer-events:none; width:320px; height:320px; border-radius:50%; object-fit:cover; filter:grayscale(1); }
-  .mascot-emoji { width:160px; height:160px; border-radius:50%; object-fit:cover; border:4px solid rgba(255,255,255,0.18); filter:drop-shadow(0 12px 30px rgba(200,98,42,0.5)); animation:sway 4s ease-in-out infinite; flex-shrink:0; }
-  @keyframes sway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+  .mascot-emoji { width:160px; height:160px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); filter:drop-shadow(0 12px 30px rgba(200,98,42,0.5)); animation:sway 4s ease-in-out infinite; flex-shrink:0; overflow:hidden; }
+  @keyframes sway { 0%,100%{transform:rotate(-3deg) scale(1.35)} 50%{transform:rotate(3deg) scale(1.35)} }
   .mascot-title { font-family:'Alfa Slab One',serif; font-size:2.4rem; color:var(--cream); line-height:1.1; text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
   .mascot-title span { color:var(--amber-glow); }
   .mascot-body { font-family:'Lora',serif; font-style:italic; font-size:1rem; line-height:1.8; color:var(--mist); max-width:540px; margin-top:1rem; }
@@ -269,7 +265,7 @@
   /* FOOTER CTA */
   .footer-cta { padding:7rem 3rem; text-align:center; background:var(--teal-mid); position:relative; overflow:hidden; }
   .footer-cta::before { content:'☂'; position:absolute; font-size:28rem; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.04; pointer-events:none; line-height:1; }
-  .footer-cta-raccoon { width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,0.2); display:block; margin:0 auto 1.5rem; animation:sway 4s ease-in-out infinite; position:relative; z-index:1; filter:drop-shadow(0 8px 24px rgba(200,98,42,0.45)); }
+  .footer-cta-raccoon { width:90px; height:90px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); display:block; margin:0 auto 1.5rem; animation:sway 4s ease-in-out infinite; position:relative; z-index:1; filter:drop-shadow(0 8px 24px rgba(200,98,42,0.45)); overflow:hidden; }
   .footer-cta-title { font-family:'Alfa Slab One',serif; font-size:clamp(3rem,6vw,5.5rem); color:var(--cream); line-height:1; text-shadow:3px 3px 0 rgba(0,0,0,0.3); position:relative; z-index:1; }
   .footer-cta-sub { font-family:'Lora',serif; font-style:italic; font-size:1.1rem; color:var(--amber-glow); margin:0.8rem 0 2.5rem; position:relative; z-index:1; }
   .footer-form { display:flex; max-width:420px; margin:0 auto; position:relative; z-index:1; box-shadow:0 10px 40px rgba(0,0,0,0.4); }
@@ -284,7 +280,7 @@
   /* FOOTER */
   footer { background:var(--ink); border-top:2px solid rgba(200,98,42,0.22); padding:2.5rem 3rem; display:flex; justify-content:space-between; align-items:center; gap:2rem; }
   .footer-logo { font-family:'Alfa Slab One',serif; font-size:1.25rem; color:var(--cream); text-shadow:1px 1px 0 rgba(0,0,0,0.4); display:flex; align-items:center; gap:0.5rem; }
-  .footer-logo img { width:30px; height:30px; border-radius:50%; object-fit:cover; border:1.5px solid rgba(255,255,255,0.15); }
+  .footer-logo img { width:30px; height:30px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); overflow:hidden; }
   .footer-tagline { font-family:'Lora',serif; font-style:italic; font-size:0.78rem; color:var(--mist); margin-top:0.2rem; }
   .footer-links { display:flex; gap:2rem; list-style:none; }
   .footer-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
@@ -371,13 +367,9 @@
   </div>
 
   <div class="cards-grid reveal">
-
-    <!-- HERO CARD (spans 2 cols) -->
     <a class="card card--hero" href="#">
       <div class="card-bar"></div>
-      <div class="card-img-wrap">
-        <div class="card-img-placeholder">🍜</div>
-      </div>
+      <div class="card-img-wrap"><div class="card-img-placeholder">🍜</div></div>
       <div class="card-text">
         <div class="card-cat">🍜 Food & Drink</div>
         <h3 class="card-title">Tanaka Bros just opened their ramen counter in Capitol Hill — and the line is already wrapping the block</h3>
@@ -385,13 +377,9 @@
         <div class="card-loc">Capitol Hill · Tue–Sun</div>
       </div>
     </a>
-
-    <!-- CARD 2 -->
     <a class="card" href="#">
       <div class="card-bar"></div>
-      <div class="card-img-wrap">
-        <div class="card-img-placeholder">🎵</div>
-      </div>
+      <div class="card-img-wrap"><div class="card-img-placeholder">🎵</div></div>
       <div class="card-text">
         <div class="card-cat">🎵 Music</div>
         <h3 class="card-title">Neumos hosts a rare all-local lineup this Friday</h3>
@@ -399,13 +387,9 @@
         <div class="card-loc">Fri Mar 13 · Capitol Hill</div>
       </div>
     </a>
-
-    <!-- CARD 3 -->
     <a class="card" href="#">
       <div class="card-bar"></div>
-      <div class="card-img-wrap">
-        <div class="card-img-placeholder">🌸</div>
-      </div>
+      <div class="card-img-wrap"><div class="card-img-placeholder">🌸</div></div>
       <div class="card-text">
         <div class="card-cat">🌸 Outdoors</div>
         <h3 class="card-title">The cherry blossoms at UW are peaking early this year</h3>
@@ -413,13 +397,9 @@
         <div class="card-loc">This Weekend · UW Campus</div>
       </div>
     </a>
-
-    <!-- CARD 4 -->
     <a class="card" href="#">
       <div class="card-bar"></div>
-      <div class="card-img-wrap">
-        <div class="card-img-placeholder">🎨</div>
-      </div>
+      <div class="card-img-wrap"><div class="card-img-placeholder">🎨</div></div>
       <div class="card-text">
         <div class="card-cat">🎨 Arts & Culture</div>
         <h3 class="card-title">SAM's new Pacific Northwest retrospective opens Saturday</h3>
@@ -427,13 +407,9 @@
         <div class="card-loc">Sat Mar 14 · Downtown</div>
       </div>
     </a>
-
-    <!-- CARD 5 -->
     <a class="card" href="#">
       <div class="card-bar"></div>
-      <div class="card-img-wrap">
-        <div class="card-img-placeholder">🏪</div>
-      </div>
+      <div class="card-img-wrap"><div class="card-img-placeholder">🏪</div></div>
       <div class="card-text">
         <div class="card-cat">🏪 New Opening</div>
         <h3 class="card-title">Ballard's newest bookshop-café hybrid opens its doors</h3>
@@ -441,7 +417,6 @@
         <div class="card-loc">Now Open · Ballard</div>
       </div>
     </a>
-
   </div>
 </section>
 
@@ -555,7 +530,6 @@
 </footer>
 
 <script>
-  // Rain
   const rain = document.getElementById('rain');
   for (let i = 0; i < 75; i++) {
     const d = document.createElement('div');
@@ -568,15 +542,11 @@
     rain.appendChild(d);
   }
 
-  // Scroll reveal
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // ── BEEHIIV SUBSCRIBE ──
-  // Get your Publication ID from: Beehiiv Dashboard → Settings → Publication Details
-  // Looks like: pub_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   const BEEHIIV_PUB_ID = 'YOUR_PUBLICATION_ID_HERE';
 
   async function subscribe(src) {
@@ -584,16 +554,13 @@
     const msg   = document.getElementById(src + '-success');
     const btn   = input.nextElementSibling;
     const email = input.value.trim();
-
     if (!email || !email.includes('@')) {
       input.style.borderColor = '#e05a5a';
       setTimeout(() => input.style.borderColor = '', 1500);
       return;
     }
-
     btn.disabled = true;
     btn.textContent = '...';
-
     try {
       const res = await fetch(
         `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
@@ -610,17 +577,14 @@
           })
         }
       );
-      // Show success regardless — dont expose API errors to users
       if (!res.ok) console.warn('Beehiiv:', await res.json());
     } catch(e) {
       console.warn('Subscribe error:', e);
     }
-
     input.parentElement.style.display = 'none';
     msg.style.display = 'block';
   }
 
-  // Smooth scroll
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
