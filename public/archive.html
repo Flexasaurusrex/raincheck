@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archive — Raincheck Seattle</title>
+<meta name="description" content="Every issue of Raincheck — Seattle's free weekly newsletter. Browse past picks." />
+<link rel="canonical" href="https://raincheck.news/archive" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://raincheck.news/archive" />
+<meta property="og:title" content="Archive — Raincheck Seattle" />
+<meta property="og:description" content="Every issue of Raincheck — Seattle's free weekly newsletter." />
+<meta property="og:image" content="https://raincheck.news/social.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@raincheckseattle" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+<meta name="theme-color" content="#1a3a3f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Alfa+Slab+One&family=Lora:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-deep:#1a3a3f; --teal-mid:#2a5560; --teal-light:#3d7a87;
+    --amber:#c8622a; --amber-warm:#e07a3a; --amber-glow:#f0a060;
+    --cream:#f2ead8; --ink:#0e1f22; --warm-white:#faf6ee; --mist:#8aacb5;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--teal-deep); color:var(--cream); font-family:'Lora',Georgia,serif; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E"); pointer-events:none; z-index:999; opacity:0.45; }
+  .rain-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; overflow:hidden; }
+  .raindrop { position:absolute; top:-30px; width:1.5px; background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.14)); border-radius:2px; animation:fall linear infinite; }
+  @keyframes fall { to { transform:translateY(110vh) translateX(6px); } }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; justify-content:space-between; align-items:center; padding:1rem 3rem; background:rgba(10,24,27,0.93); backdrop-filter:blur(16px); border-bottom:2px solid rgba(200,98,42,0.3); }
+  .nav-logo { display:flex; align-items:center; gap:0.5rem; text-decoration:none; }
+  .nav-raccoon { width:38px; height:38px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); flex-shrink:0; overflow:hidden; }
+  .nav-logo-text { font-family:'Alfa Slab One',serif; font-size:1.4rem; color:var(--cream); text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.82rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
+  .nav-links a:hover { color:var(--amber-glow); }
+  .nav-cta { background:var(--amber) !important; color:var(--warm-white) !important; padding:0.45rem 1.2rem !important; border-radius:3px; }
+  .nav-cta:hover { background:var(--amber-warm) !important; }
+
+  .page-hero { padding:10rem 3rem 5rem; text-align:center; position:relative; z-index:10; }
+  .page-eyebrow { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:800; letter-spacing:0.25em; text-transform:uppercase; color:var(--amber); margin-bottom:1.2rem; display:block; }
+  .page-title { font-family:'Alfa Slab One',serif; font-size:clamp(3.5rem,8vw,6.5rem); line-height:0.95; color:var(--cream); text-shadow:4px 4px 0 rgba(0,0,0,0.4); }
+  .page-subtitle { font-family:'Lora',serif; font-style:italic; font-size:1.1rem; color:var(--mist); margin-top:1rem; }
+
+  .archive-section { padding:4rem 3rem 6rem; position:relative; z-index:10; max-width:1100px; margin:0 auto; }
+
+  .issue-block { margin-bottom:5rem; }
+  .issue-header { display:flex; align-items:baseline; gap:1.5rem; margin-bottom:2rem; padding-bottom:1rem; border-bottom:2px solid rgba(200,98,42,0.25); flex-wrap:wrap; }
+  .issue-num { font-family:'Alfa Slab One',serif; font-size:2.2rem; color:var(--cream); line-height:1; text-shadow:2px 2px 0 rgba(0,0,0,0.3); }
+  .issue-date { font-family:'Barlow Condensed',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber-glow); background:rgba(200,98,42,0.12); border:1px solid rgba(200,98,42,0.3); padding:0.3rem 0.8rem; border-radius:2px; }
+  .issue-tag { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); margin-left:auto; }
+
+  .stories-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:rgba(0,0,0,0.35); border:2px solid rgba(0,0,0,0.35); border-radius:4px; overflow:hidden; }
+  .story-card { background:var(--teal-mid); position:relative; overflow:hidden; transition:background 0.2s; display:flex; flex-direction:column; text-decoration:none; }
+  .story-card:hover { background:#356070; }
+  .story-card--hero { grid-column:span 2; }
+  .card-bar { position:absolute; top:0; left:0; width:100%; height:3px; background:var(--amber); transform:scaleX(0); transform-origin:left; transition:transform 0.25s ease; z-index:2; }
+  .story-card:hover .card-bar { transform:scaleX(1); }
+  .card-img { width:100%; height:220px; overflow:hidden; background:var(--teal-deep); flex-shrink:0; }
+  .story-card--hero .card-img { height:280px; }
+  .card-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s ease; display:block; }
+  .story-card:hover .card-img img { transform:scale(1.04); }
+  .card-body { padding:1.2rem 1.4rem 1.6rem; display:flex; flex-direction:column; flex:1; }
+  .story-card--hero .card-body { padding:1.4rem 1.8rem 2rem; }
+  .card-cat { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:800; letter-spacing:0.2em; text-transform:uppercase; color:var(--amber-glow); margin-bottom:0.5rem; }
+  .card-title { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; line-height:1.35; color:var(--cream); margin-bottom:0.6rem; }
+  .story-card--hero .card-title { font-size:1.4rem; line-height:1.25; }
+  .card-text { font-family:'Lora',serif; font-size:0.83rem; line-height:1.7; color:var(--mist); }
+  .card-loc { font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.42); margin-top:0.7rem; }
+  .card-links { display:flex; gap:0.5rem; margin-top:0.8rem; flex-wrap:wrap; }
+  .card-link { font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; padding:0.3rem 0.7rem; border-radius:2px; text-decoration:none; transition:background 0.2s; }
+  .card-link--primary { background:var(--amber); color:var(--cream); }
+  .card-link--primary:hover { background:var(--amber-warm); }
+  .card-link--secondary { background:rgba(200,98,42,0.12); border:1px solid rgba(200,98,42,0.3); color:var(--amber-glow); }
+  .card-link--secondary:hover { background:rgba(200,98,42,0.25); }
+
+  .footer-cta { padding:7rem 3rem; text-align:center; background:var(--teal-mid); position:relative; overflow:hidden; z-index:10; }
+  .footer-cta::before { content:"☂"; position:absolute; font-size:28rem; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.04; pointer-events:none; }
+  .footer-cta-raccoon { width:90px; height:90px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); display:block; margin:0 auto 1.5rem; animation:sway 4s ease-in-out infinite; position:relative; z-index:1; filter:drop-shadow(0 8px 24px rgba(200,98,42,0.45)); overflow:hidden; }
+  @keyframes sway { 0%,100%{transform:rotate(-3deg) scale(1.35)} 50%{transform:rotate(3deg) scale(1.35)} }
+  .footer-cta-title { font-family:'Alfa Slab One',serif; font-size:clamp(3rem,6vw,5rem); color:var(--cream); line-height:1; text-shadow:3px 3px 0 rgba(0,0,0,0.3); position:relative; z-index:1; }
+  .footer-cta-sub { font-family:'Lora',serif; font-style:italic; font-size:1.1rem; color:var(--amber-glow); margin:0.8rem 0 2.5rem; position:relative; z-index:1; }
+  .footer-form { display:flex; max-width:420px; margin:0 auto; position:relative; z-index:1; box-shadow:0 10px 40px rgba(0,0,0,0.4); }
+  .footer-form input { flex:1; padding:1rem 1.2rem; background:rgba(14,31,34,0.7); border:1.5px solid rgba(200,98,42,0.38); border-right:none; border-radius:3px 0 0 3px; color:var(--cream); font-family:'Barlow Condensed',sans-serif; font-size:1rem; outline:none; transition:border-color 0.2s; }
+  .footer-form input::placeholder { color:rgba(138,172,181,0.5); }
+  .footer-form input:focus { border-color:var(--amber-glow); }
+  .footer-form button { padding:1rem 1.5rem; background:var(--amber); color:var(--warm-white); border:none; border-radius:0 3px 3px 0; font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .footer-form button:hover { background:var(--amber-warm); }
+  .success-msg { display:none; font-family:'Lora',serif; font-style:italic; color:var(--amber-glow); font-size:1.1rem; position:relative; z-index:1; }
+
+  footer { background:var(--ink); border-top:2px solid rgba(200,98,42,0.22); padding:2.5rem 3rem; display:flex; justify-content:space-between; align-items:center; gap:2rem; position:relative; z-index:10; }
+  .footer-logo { font-family:'Alfa Slab One',serif; font-size:1.25rem; color:var(--cream); display:flex; align-items:center; gap:0.5rem; text-decoration:none; }
+  .footer-logo img { width:30px; height:30px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); overflow:hidden; }
+  .footer-tagline { font-family:'Lora',serif; font-style:italic; font-size:0.78rem; color:var(--mist); margin-top:0.2rem; }
+  .footer-links { display:flex; gap:2rem; list-style:none; }
+  .footer-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
+  .footer-links a:hover { color:var(--amber-glow); }
+  .beehiiv-badge { font-family:'Barlow Condensed',sans-serif; font-size:0.66rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.38); border:1px solid rgba(138,172,181,0.16); padding:0.28rem 0.72rem; border-radius:2px; }
+
+  .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.65s ease,transform 0.65s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  @media (max-width:768px) {
+    nav { padding:0.8rem 1.2rem; } .nav-links { display:none; } .nav-logo-text { font-size:1.1rem; }
+    .page-hero { padding:7rem 1.4rem 3rem; }
+    .archive-section { padding:2.5rem 1rem 4rem; }
+    .stories-grid { grid-template-columns:1fr; } .story-card--hero { grid-column:span 1; }
+    .card-img,.story-card--hero .card-img { height:220px; }
+    .issue-header { gap:0.8rem; }
+    .footer-cta { padding:4rem 1.4rem; }
+    .footer-form { flex-direction:column; } .footer-form input { border-radius:3px; border-right:1.5px solid rgba(200,98,42,0.38); } .footer-form button { border-radius:3px; }
+    footer { flex-direction:column; gap:1.2rem; padding:2rem 1.4rem; text-align:center; } .footer-links { flex-wrap:wrap; justify-content:center; gap:1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="rain-container" id="rain"></div>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <img class="nav-raccoon" src="/rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+    <span class="nav-logo-text">Raincheck</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/#this-week">This Week</a></li>
+    <li><a href="/archive">Archive</a></li>
+    <li><a href="/#advertise">Advertise</a></li>
+    <li><a href="/#subscribe" class="nav-cta">Subscribe Free</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <span class="page-eyebrow">☂ Every issue, every week</span>
+  <h1 class="page-title">The Archive.</h1>
+  <p class="page-subtitle">Every Sunday we showed up. Here's the record.</p>
+</div>
+
+<div class="archive-section">
+
+  <!-- ISSUE 001 -->
+  <div class="issue-block reveal">
+    <div class="issue-header">
+      <div class="issue-num">Issue 001</div>
+      <div class="issue-date">Vol. 1</div>
+      <div class="issue-tag">Week of March 7, 2026</div>
+    </div>
+
+    <div class="stories-grid">
+
+      <!-- Hero: ECCC -->
+      <div class="story-card story-card--hero">
+        <div class="card-bar"></div>
+        <div class="card-img">
+          <img src="https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885736458-w3ilvswa40k-xJTIFn7gG1uxnRgtb8GEgatrBrR2st.png" alt="Emerald City Comic Con" />
+        </div>
+        <div class="card-body">
+          <div class="card-cat">🎨 Arts & Culture</div>
+          <h3 class="card-title">Emerald City Comic Con Takes Over Seattle Convention Center</h3>
+          <p class="card-text">Emerald City Comic Con returns to the Seattle Convention Center from Thursday, March 5 to Sunday, March 8, featuring notable screen legends and comic royalty. This year's guests of honor include comic book legend Chris Claremont, Doctor Who's David Tennant, and Star Wars' Hayden Christensen.</p>
+          <div class="card-loc">Downtown · March 5–8</div>
+          <div class="card-links">
+            <a class="card-link card-link--primary" href="https://www.emeraldcitycomiccon.com/" target="_blank" rel="noopener">More info →</a>
+            <a class="card-link card-link--secondary" href="https://www.emeraldcitycomiccon.com/attend/tickets/" target="_blank" rel="noopener">🎟 Get tickets</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mariners -->
+      <div class="story-card">
+        <div class="card-bar"></div>
+        <div class="card-img">
+          <img src="https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885735235-k5g552mcxp-Qry3qlalnHPYorTx2QEHZgYBcKnDv9.png" alt="Mariners Home Opener" />
+        </div>
+        <div class="card-body">
+          <div class="card-cat">⚽ Sports</div>
+          <h3 class="card-title">Mariners Home Opener Against Cleveland Guardians</h3>
+          <p class="card-text">The Mariners will face off against the Cleveland Guardians for the home opener on Thursday, March 26. This marks the 50th season in franchise history.</p>
+          <div class="card-loc">SoDo · March 26</div>
+          <div class="card-links">
+            <a class="card-link card-link--primary" href="https://www.mlb.com/mariners/schedule" target="_blank" rel="noopener">More info →</a>
+            <a class="card-link card-link--secondary" href="https://www.mlb.com/mariners/tickets" target="_blank" rel="noopener">🎟 Get tickets</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kells -->
+      <div class="story-card">
+        <div class="card-bar"></div>
+        <div class="card-img">
+          <img src="https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885731929-m1w5rpmieji-IqJrfFRWplJPLILvYh1tcY1flZLwoq.png" alt="Kells Irish Festival" />
+        </div>
+        <div class="card-body">
+          <div class="card-cat">🍜 Food & Drink</div>
+          <h3 class="card-title">Kells Irish Festival Brings 12 Days of Celtic Celebration</h3>
+          <p class="card-text">Patrick's Irish Festival at the historic Butterworth Building near Pike Place. Daily live performances from folk ballads to Celtic rock, plus rugby watch parties and parade festivities.</p>
+          <div class="card-loc">Pike Place Market · March 6–17</div>
+          <div class="card-links">
+            <a class="card-link card-link--primary" href="https://www.kellsirish.com/seattle/" target="_blank" rel="noopener">More info →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taste Washington -->
+      <div class="story-card">
+        <div class="card-bar"></div>
+        <div class="card-img">
+          <img src="https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885731263-z4lsfi7tr5g-R5LvcE0LfomLM93zUNWszA2fBBhjNL.png" alt="Taste Washington" />
+        </div>
+        <div class="card-body">
+          <div class="card-cat">🍜 Food & Drink</div>
+          <h3 class="card-title">Taste Washington Returns with 200+ Wineries and Restaurants</h3>
+          <p class="card-text">Unlimited tastings from over 200 wineries and 75 restaurants, plus live cooking demos, hands-on crafts, and bingo games on the side.</p>
+          <div class="card-loc">SoDo · March 21–22</div>
+          <div class="card-links">
+            <a class="card-link card-link--primary" href="https://tastewashington.org/" target="_blank" rel="noopener">More info →</a>
+            <a class="card-link card-link--secondary" href="https://tastewashington.org/attend/" target="_blank" rel="noopener">🎟 Get tickets</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balkan Night -->
+      <div class="story-card">
+        <div class="card-bar"></div>
+        <div class="card-img">
+          <img src="https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885739366-y86ikvzfbfi-aXCuiaoBLtJh9L1ESjG9VcpjiAlzgW.png" alt="Balkan Night Northwest" />
+        </div>
+        <div class="card-body">
+          <div class="card-cat">🎵 Music</div>
+          <h3 class="card-title">Balkan Night Northwest Celebrates Regional Culture</h3>
+          <p class="card-text">The region's biggest Balkan music and dance event. Three stages with nonstop tunes and steps from Albania, Bulgaria, Serbia, and beyond at St. Demetrios.</p>
+          <div class="card-loc">Various Locations · March 14</div>
+          <div class="card-links">
+            <a class="card-link card-link--primary" href="https://www.balkannightnw.com/" target="_blank" rel="noopener">More info →</a>
+            <a class="card-link card-link--secondary" href="https://www.strangertickets.com/events/180135975/balkan-night-northwest-2026" target="_blank" rel="noopener">🎟 Get tickets</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Future issues will appear here -->
+
+</div>
+
+<section class="footer-cta" id="subscribe">
+  <img class="footer-cta-raccoon" src="/rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+  <h2 class="footer-cta-title">See you Sunday.</h2>
+  <p class="footer-cta-sub">Free. Weekly. Seattle's best — straight to your inbox.</p>
+  <div class="footer-form">
+    <input type="email" id="footer-email" placeholder="your@email.com" />
+    <button onclick="subscribe('footer')">Subscribe free</button>
+  </div>
+  <p class="success-msg" id="footer-success" style="margin-top:1rem;">You're in. See you Sunday ☂</p>
+</section>
+
+<footer>
+  <div>
+    <a class="footer-logo" href="/"><img src="/rockyracoon.png" alt="Rocky" /> Raincheck</a>
+    <div class="footer-tagline">Where the drizzle becomes inspiration.</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="/archive">Archive</a></li>
+    <li><a href="/#advertise">Advertise</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="mailto:hello@raincheck.news?subject=Unsubscribe">Unsubscribe</a></li>
+  </ul>
+  <div class="beehiiv-badge">Powered by Beehiiv</div>
+</footer>
+
+<script>
+  const rain = document.getElementById('rain');
+  for (let i = 0; i < 75; i++) {
+    const d = document.createElement('div');
+    d.className = 'raindrop';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.height = (Math.random() * 70 + 15) + 'px';
+    d.style.animationDuration = (Math.random() * 1.2 + 0.6) + 's';
+    d.style.animationDelay = (Math.random() * 4) + 's';
+    d.style.opacity = (Math.random() * 0.5 + 0.15).toFixed(2);
+    rain.appendChild(d);
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  async function subscribe(src) {
+    const input = document.getElementById(src + '-email');
+    const msg   = document.getElementById(src + '-success');
+    const btn   = input.nextElementSibling;
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) { input.style.borderColor = '#e05a5a'; setTimeout(() => input.style.borderColor = '', 1500); return; }
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, utm_source:'archive_page' }) });
+    } catch(e) { console.warn(e); }
+    input.parentElement.style.display = 'none';
+    msg.style.display = 'block';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Raincheck Seattle</title>
+<meta name="description" content="Raincheck is Seattle's free weekly newsletter. Built by PNW locals who were tired of missing the good stuff." />
+<link rel="canonical" href="https://raincheck.news/about" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://raincheck.news/about" />
+<meta property="og:title" content="About — Raincheck Seattle" />
+<meta property="og:description" content="Built by PNW locals who were tired of missing the good stuff." />
+<meta property="og:image" content="https://raincheck.news/social.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@raincheckseattle" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+<meta name="theme-color" content="#1a3a3f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Alfa+Slab+One&family=Lora:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-deep:#1a3a3f; --teal-mid:#2a5560; --teal-light:#3d7a87;
+    --amber:#c8622a; --amber-warm:#e07a3a; --amber-glow:#f0a060;
+    --cream:#f2ead8; --cream-dark:#e0d4bc; --parchment:#d4c8a8;
+    --ink:#0e1f22; --warm-white:#faf6ee; --rust:#8b3a1a; --mist:#8aacb5;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--teal-deep); color:var(--cream); font-family:'Lora',Georgia,serif; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E"); pointer-events:none; z-index:999; opacity:0.45; }
+  .rain-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; overflow:hidden; }
+  .raindrop { position:absolute; top:-30px; width:1.5px; background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.14)); border-radius:2px; animation:fall linear infinite; }
+  @keyframes fall { to { transform:translateY(110vh) translateX(6px); } }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; justify-content:space-between; align-items:center; padding:1rem 3rem; background:rgba(10,24,27,0.93); backdrop-filter:blur(16px); border-bottom:2px solid rgba(200,98,42,0.3); }
+  .nav-logo { display:flex; align-items:center; gap:0.5rem; text-decoration:none; }
+  .nav-raccoon { width:38px; height:38px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); flex-shrink:0; overflow:hidden; }
+  .nav-logo-text { font-family:'Alfa Slab One',serif; font-size:1.4rem; color:var(--cream); text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.82rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
+  .nav-links a:hover { color:var(--amber-glow); }
+  .nav-cta { background:var(--amber) !important; color:var(--warm-white) !important; padding:0.45rem 1.2rem !important; border-radius:3px; }
+  .nav-cta:hover { background:var(--amber-warm) !important; }
+
+  .page-hero { padding:10rem 3rem 6rem; text-align:center; position:relative; z-index:10; }
+  .page-eyebrow { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:800; letter-spacing:0.25em; text-transform:uppercase; color:var(--amber); margin-bottom:1.2rem; display:block; }
+  .page-title { font-family:'Alfa Slab One',serif; font-size:clamp(3.5rem,8vw,6.5rem); line-height:0.95; color:var(--cream); text-shadow:4px 4px 0 rgba(0,0,0,0.4); }
+  .page-subtitle { font-family:'Lora',serif; font-style:italic; font-size:1.25rem; color:var(--amber-glow); margin-top:1.2rem; max-width:540px; margin-left:auto; margin-right:auto; line-height:1.7; }
+
+  .content-block { max-width:720px; margin:0 auto; padding:0 3rem; position:relative; z-index:10; }
+
+  .story-section { padding:5rem 3rem; position:relative; z-index:10; }
+  .story-inner { max-width:720px; margin:0 auto; }
+  .story-section--dark { background:var(--ink); border-top:2px solid rgba(200,98,42,0.2); border-bottom:2px solid rgba(200,98,42,0.2); }
+  .story-section--mid { background:var(--teal-mid); }
+
+  .section-label { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:800; letter-spacing:0.25em; text-transform:uppercase; color:var(--amber); margin-bottom:1rem; display:block; }
+  .story-headline { font-family:'Alfa Slab One',serif; font-size:clamp(2rem,4vw,3rem); color:var(--cream); line-height:1.05; margin-bottom:1.5rem; text-shadow:2px 2px 0 rgba(0,0,0,0.3); }
+  .story-headline em { font-family:'Lora',serif; font-style:italic; font-weight:400; color:var(--amber-glow); }
+  .story-body { font-family:'Lora',serif; font-size:1.05rem; line-height:1.9; color:var(--mist); }
+  .story-body p { margin-bottom:1.4rem; }
+  .story-body p:last-child { margin-bottom:0; }
+
+  .raccoon-feature { display:flex; gap:3rem; align-items:center; }
+  .raccoon-img { width:160px; height:160px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.2); flex-shrink:0; overflow:hidden; filter:drop-shadow(0 12px 30px rgba(200,98,42,0.45)); animation:sway 4s ease-in-out infinite; }
+  @keyframes sway { 0%,100%{transform:rotate(-3deg) scale(1.2)} 50%{transform:rotate(3deg) scale(1.2)} }
+
+  .values-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2.5rem; }
+  .value-box { background:rgba(42,85,96,0.4); border:1px solid rgba(200,98,42,0.18); padding:1.8rem; border-radius:3px; transition:border-color 0.2s; }
+  .value-box:hover { border-color:rgba(200,98,42,0.45); }
+  .value-icon { font-size:1.6rem; margin-bottom:0.7rem; display:block; }
+  .value-title { font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--cream); margin-bottom:0.5rem; }
+  .value-body { font-family:'Lora',serif; font-size:0.85rem; line-height:1.7; color:var(--mist); }
+
+  .divider { display:flex; align-items:center; gap:1.2rem; padding:0 3rem; position:relative; z-index:10; }
+  .divider::before,.divider::after { content:""; flex:1; height:1px; background:rgba(200,98,42,0.2); }
+  .divider span { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--amber); white-space:nowrap; }
+
+  .footer-cta { padding:7rem 3rem; text-align:center; background:var(--teal-mid); position:relative; overflow:hidden; z-index:10; }
+  .footer-cta::before { content:"☂"; position:absolute; font-size:28rem; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.04; pointer-events:none; }
+  .footer-cta-raccoon { width:90px; height:90px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); display:block; margin:0 auto 1.5rem; animation:sway 4s ease-in-out infinite; position:relative; z-index:1; filter:drop-shadow(0 8px 24px rgba(200,98,42,0.45)); overflow:hidden; }
+  .footer-cta-title { font-family:'Alfa Slab One',serif; font-size:clamp(3rem,6vw,5rem); color:var(--cream); line-height:1; text-shadow:3px 3px 0 rgba(0,0,0,0.3); position:relative; z-index:1; }
+  .footer-cta-sub { font-family:'Lora',serif; font-style:italic; font-size:1.1rem; color:var(--amber-glow); margin:0.8rem 0 2.5rem; position:relative; z-index:1; }
+  .footer-form { display:flex; max-width:420px; margin:0 auto; position:relative; z-index:1; box-shadow:0 10px 40px rgba(0,0,0,0.4); }
+  .footer-form input { flex:1; padding:1rem 1.2rem; background:rgba(14,31,34,0.7); border:1.5px solid rgba(200,98,42,0.38); border-right:none; border-radius:3px 0 0 3px; color:var(--cream); font-family:'Barlow Condensed',sans-serif; font-size:1rem; outline:none; transition:border-color 0.2s; }
+  .footer-form input::placeholder { color:rgba(138,172,181,0.5); }
+  .footer-form input:focus { border-color:var(--amber-glow); }
+  .footer-form button { padding:1rem 1.5rem; background:var(--amber); color:var(--warm-white); border:none; border-radius:0 3px 3px 0; font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .footer-form button:hover { background:var(--amber-warm); }
+  .success-msg { display:none; font-family:'Lora',serif; font-style:italic; color:var(--amber-glow); font-size:1.1rem; position:relative; z-index:1; }
+
+  footer { background:var(--ink); border-top:2px solid rgba(200,98,42,0.22); padding:2.5rem 3rem; display:flex; justify-content:space-between; align-items:center; gap:2rem; position:relative; z-index:10; }
+  .footer-logo { font-family:'Alfa Slab One',serif; font-size:1.25rem; color:var(--cream); text-shadow:1px 1px 0 rgba(0,0,0,0.4); display:flex; align-items:center; gap:0.5rem; text-decoration:none; }
+  .footer-logo img { width:30px; height:30px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); overflow:hidden; }
+  .footer-tagline { font-family:'Lora',serif; font-style:italic; font-size:0.78rem; color:var(--mist); margin-top:0.2rem; }
+  .footer-links { display:flex; gap:2rem; list-style:none; }
+  .footer-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
+  .footer-links a:hover { color:var(--amber-glow); }
+  .beehiiv-badge { font-family:'Barlow Condensed',sans-serif; font-size:0.66rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.38); border:1px solid rgba(138,172,181,0.16); padding:0.28rem 0.72rem; border-radius:2px; }
+
+  .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.65s ease,transform 0.65s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  @media (max-width:768px) {
+    nav { padding:0.8rem 1.2rem; } .nav-links { display:none; } .nav-logo-text { font-size:1.1rem; }
+    .page-hero { padding:7rem 1.4rem 4rem; }
+    .story-section { padding:3rem 1.4rem; }
+    .raccoon-feature { flex-direction:column; text-align:center; gap:1.5rem; }
+    .raccoon-img { margin:0 auto; }
+    .values-grid { grid-template-columns:1fr; }
+    .footer-cta { padding:4rem 1.4rem; }
+    .footer-form { flex-direction:column; } .footer-form input { border-radius:3px; border-right:1.5px solid rgba(200,98,42,0.38); } .footer-form button { border-radius:3px; }
+    footer { flex-direction:column; gap:1.2rem; padding:2rem 1.4rem; text-align:center; } .footer-links { flex-wrap:wrap; justify-content:center; gap:1rem; }
+    .divider { padding:0 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="rain-container" id="rain"></div>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <img class="nav-raccoon" src="/rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+    <span class="nav-logo-text">Raincheck</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/#this-week">This Week</a></li>
+    <li><a href="/archive">Archive</a></li>
+    <li><a href="/#advertise">Advertise</a></li>
+    <li><a href="/#subscribe" class="nav-cta">Subscribe Free</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <span class="page-eyebrow">☂ Our story</span>
+  <h1 class="page-title">Built for<br>Seattle.</h1>
+  <p class="page-subtitle">By PNW heads who got tired of hearing about great things after they'd already happened.</p>
+</div>
+
+<div class="divider"><span>The why</span></div>
+
+<section class="story-section">
+  <div class="story-inner reveal">
+    <span class="section-label">How this started</span>
+    <h2 class="story-headline">We kept missing <em>everything.</em></h2>
+    <div class="story-body">
+      <p>Seattle is one of those cities that rewards the curious. There's always something worth doing — a new ramen spot in Capitol Hill, a gallery opening in Pioneer Square, a hike that clears the clouds on a Saturday morning. The problem was finding it before the weekend was already over.</p>
+      <p>We kept getting the Sunday night text. "You should have come." A festival we'd walked past and not known about. A pop-up that was gone before we heard it existed. A show that sold out while we were doomscrolling through nothing.</p>
+      <p>The information was out there — buried in event pages, scattered across Instagram stories, hiding in neighborhood Facebook groups nobody wanted to be in. What didn't exist was one clean, honest, well-designed thing that surfaced the best of it every week and put it in your inbox before the week started.</p>
+      <p>So we built it.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>What we stand for</span></div>
+
+<section class="story-section story-section--dark">
+  <div class="story-inner">
+    <span class="section-label reveal">The deal</span>
+    <h2 class="story-headline reveal">No noise. Just <em>signal.</em></h2>
+    <div class="values-grid">
+      <div class="value-box reveal" style="transition-delay:0.05s">
+        <span class="value-icon">☂</span>
+        <div class="value-title">Seattle locals only</div>
+        <div class="value-body">We live here. We eat here. We deal with the same rain, the same traffic, and the same love for this city that you do. This isn't written from a content farm — it's written from Capitol Hill.</div>
+      </div>
+      <div class="value-box reveal" style="transition-delay:0.1s">
+        <span class="value-icon">🚫</span>
+        <div class="value-title">No politics. No crime.</div>
+        <div class="value-body">There's enough of that everywhere else. Raincheck is a deliberate break from the noise — the good stuff only. Events, food, music, culture, the outdoors. Things worth getting off the couch for.</div>
+      </div>
+      <div class="value-box reveal" style="transition-delay:0.15s">
+        <span class="value-icon">🍕</span>
+        <div class="value-title">Actually tested</div>
+        <div class="value-body">We're not pulling from press releases. Rocky searches the web for what's actually happening, and we filter for what's actually worth your time. Real events. Real places. Real recommendations.</div>
+      </div>
+      <div class="value-box reveal" style="transition-delay:0.2s">
+        <span class="value-icon">🆓</span>
+        <div class="value-title">Free. Always.</div>
+        <div class="value-body">Raincheck will always be free to read. One email, every Sunday morning. No paywall, no premium tier, no tricks. Just the best of Seattle straight to your inbox before the week starts.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>Meet Rocky</span></div>
+
+<section class="story-section story-section--mid">
+  <div class="story-inner">
+    <div class="raccoon-feature reveal">
+      <img class="raccoon-img" src="/rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+      <div>
+        <span class="section-label">Your guide</span>
+        <h2 class="story-headline">Rocky knows <em>every corner.</em></h2>
+        <div class="story-body">
+          <p>Rocky is Raincheck's mascot, editor-in-chief, and resident PNW native. A raccoon felt right — scrappy, resourceful, knows every alley and neighborhood in the city, and absolutely unbothered by the rain.</p>
+          <p>Every issue Rocky scours Seattle for the week's best picks. He's not easily impressed, deeply opinionated about ramen, and personally guarantees that pizza is mandatory.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>Join us</span></div>
+
+<section class="footer-cta" id="subscribe">
+  <img class="footer-cta-raccoon" src="/rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+  <h2 class="footer-cta-title">See you Sunday.</h2>
+  <p class="footer-cta-sub">Free. Weekly. Seattle's best — straight to your inbox.</p>
+  <div class="footer-form">
+    <input type="email" id="footer-email" placeholder="your@email.com" />
+    <button onclick="subscribe('footer')">Subscribe free</button>
+  </div>
+  <p class="success-msg" id="footer-success" style="margin-top:1rem;">You're in. See you Sunday ☂</p>
+</section>
+
+<footer>
+  <div>
+    <a class="footer-logo" href="/"><img src="/rockyracoon.png" alt="Rocky" /> Raincheck</a>
+    <div class="footer-tagline">Where the drizzle becomes inspiration.</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="/archive">Archive</a></li>
+    <li><a href="/#advertise">Advertise</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="mailto:hello@raincheck.news?subject=Unsubscribe">Unsubscribe</a></li>
+  </ul>
+  <div class="beehiiv-badge">Powered by Beehiiv</div>
+</footer>
+
+<script>
+  const rain = document.getElementById('rain');
+  for (let i = 0; i < 75; i++) {
+    const d = document.createElement('div');
+    d.className = 'raindrop';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.height = (Math.random() * 70 + 15) + 'px';
+    d.style.animationDuration = (Math.random() * 1.2 + 0.6) + 's';
+    d.style.animationDelay = (Math.random() * 4) + 's';
+    d.style.opacity = (Math.random() * 0.5 + 0.15).toFixed(2);
+    rain.appendChild(d);
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  async function subscribe(src) {
+    const input = document.getElementById(src + '-email');
+    const msg   = document.getElementById(src + '-success');
+    const btn   = input.nextElementSibling;
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) { input.style.borderColor = '#e05a5a'; setTimeout(() => input.style.borderColor = '', 1500); return; }
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, utm_source:'about_page' }) });
+    } catch(e) { console.warn(e); }
+    input.parentElement.style.display = 'none';
+    msg.style.display = 'block';
+  }
+</script>
+</body>
+</html>

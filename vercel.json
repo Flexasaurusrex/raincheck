@@ -1,7 +1,9 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/editor", "destination": "/public/editor.html" },
+    { "source": "/editor",  "destination": "/public/editor.html" },
+    { "source": "/about",   "destination": "/public/about.html" },
+    { "source": "/archive", "destination": "/public/archive.html" },
     { "source": "/((?!api/).*)", "destination": "/public/$1" }
   ]
 }
