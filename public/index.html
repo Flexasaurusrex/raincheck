@@ -250,6 +250,8 @@
   .cat-item::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--amber); transform:scaleX(0); transition:transform 0.2s; }
   .cat-item:hover::after { transform:scaleX(1); }
   .cat-icon { font-size:2rem; display:block; margin-bottom:0.8rem; }
+  .cat-icon-img { width:80px; height:80px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 0.8rem; border:2px solid rgba(200,98,42,0.25); transition:border-color 0.2s,transform 0.2s; }
+  .cat-item:hover .cat-icon-img { border-color:rgba(200,98,42,0.7); transform:scale(1.06); }
   .cat-name { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--cream); }
   .cat-sub { font-family:'Lora',serif; font-style:italic; font-size:0.73rem; color:var(--mist); margin-top:0.3rem; }
 
@@ -575,14 +577,14 @@
     <h2 class="section-title">Eight <em>categories</em></h2>
   </div>
   <div class="cat-grid reveal">
-    <div class="cat-item"><span class="cat-icon">🍽️</span><div class="cat-name">Food & Drink</div><div class="cat-sub">New spots, pop-ups, happy hours</div></div>
-    <div class="cat-item"><span class="cat-icon">🎶</span><div class="cat-name">Music & Nightlife</div><div class="cat-sub">Shows, DJ sets, live events</div></div>
-    <div class="cat-item"><span class="cat-icon">🏔️</span><div class="cat-name">Outdoors</div><div class="cat-sub">Hikes, parks, waterfront</div></div>
-    <div class="cat-item"><span class="cat-icon">🎭</span><div class="cat-name">Arts & Culture</div><div class="cat-sub">Galleries, theater, film</div></div>
-    <div class="cat-item"><span class="cat-icon">👨‍👩‍👧</span><div class="cat-name">Family</div><div class="cat-sub">Kid-friendly, free events</div></div>
-    <div class="cat-item"><span class="cat-icon">🛍️</span><div class="cat-name">Shopping</div><div class="cat-sub">Markets, local shops, finds</div></div>
-    <div class="cat-item"><span class="cat-icon">⚽</span><div class="cat-name">Sports</div><div class="cat-sub">Sounders, Kraken, Mariners</div></div>
-    <div class="cat-item"><span class="cat-icon">🦝</span><div class="cat-name">Editor's Pick</div><div class="cat-sub">The raccoon's top 3</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-food-drink.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Food & Drink" /><span class="cat-icon" style="display:none">🍽️</span><div class="cat-name">Food & Drink</div><div class="cat-sub">New spots, pop-ups, happy hours</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-music.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Music" /><span class="cat-icon" style="display:none">🎶</span><div class="cat-name">Music & Nightlife</div><div class="cat-sub">Shows, DJ sets, live events</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-outdoors.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Outdoors" /><span class="cat-icon" style="display:none">🏔️</span><div class="cat-name">Outdoors</div><div class="cat-sub">Hikes, parks, waterfront</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-arts-culture.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Arts & Culture" /><span class="cat-icon" style="display:none">🎭</span><div class="cat-name">Arts & Culture</div><div class="cat-sub">Galleries, theater, film</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-family.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Family" /><span class="cat-icon" style="display:none">👨‍👩‍👧</span><div class="cat-name">Family</div><div class="cat-sub">Kid-friendly, free events</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-shopping.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Shopping" /><span class="cat-icon" style="display:none">🛍️</span><div class="cat-name">Shopping</div><div class="cat-sub">Markets, local shops, finds</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-sports.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Sports" /><span class="cat-icon" style="display:none">⚽</span><div class="cat-name">Sports</div><div class="cat-sub">Sounders, Kraken, Mariners</div></div>
+    <div class="cat-item"><img class="cat-icon-img" src="icons/cat-editors-pick.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" alt="Editor's Pick" /><span class="cat-icon" style="display:none">🦝</span><div class="cat-name">Editor's Pick</div><div class="cat-sub">The raccoon's top 3</div></div>
   </div>
 </section>
 
@@ -592,7 +594,7 @@
     <div class="section-eyebrow">For local businesses</div>
     <h2 class="advertise-headline">Reach Seattle when<br>they're <em>paying attention</em></h2>
     <p class="advertise-body">Raincheck readers open every issue. That's not a guess — it's a 60%+ open rate in a world where 20% is industry average. Your ad sits next to content people actually wanted. No algorithm. No bidding war. Just direct access to engaged locals with spending power.</p>
-    <a href="mailto:ads@raincheckseattle.xyz" class="advertise-cta">Get the media kit →</a>
+    <a href="/cdn-cgi/l/email-protection#e4858097a496858d8a878c81878f97818590908881ca9c9d9e" class="advertise-cta">Get the media kit →</a>
   </div>
   <div class="metrics-grid reveal" style="transition-delay:0.15s">
     <div class="metric-box"><div class="metric-val">60%+</div><div class="metric-desc">Avg. open rate</div></div>
@@ -645,7 +647,7 @@
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ── LOAD STORIES FROM stories.json ──
   async function loadStories() {
     try {
@@ -816,10 +818,3 @@
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
-      const t = document.querySelector(a.getAttribute('href'));
-      if (t) t.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-</script>
-</body>
-</html>
