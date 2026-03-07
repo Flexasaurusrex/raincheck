@@ -67,7 +67,10 @@ Return ONLY this JSON array:
     "body": "2-3 sentences with specific real details.",
     "location": "Neighborhood · timing",
     "image_prompt_subject": "specific visual for woodblock linocut illustration",
-    "image_placeholder": "🍜"
+    "image_placeholder": "🍜",
+    "link": "real URL to official website, event page, or best source — null if none found",
+    "maps_link": "https://maps.google.com/?q=VENUE+NAME+SEATTLE — null if no specific venue",
+    "tickets_link": "URL to ticket purchase page — null if no tickets needed"
   }
 ]
 
@@ -138,6 +141,7 @@ async function generateImage(res, imagePromptSubject) {
   });
 
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message);
+  if (data.error) throw new Error(`OpenAI error: ${data.error.message} (code: ${data.error.code})`);
+  if (!data.data || !data.data[0]) throw new Error(`Unexpected OpenAI response: ${JSON.stringify(data)}`);
   return res.status(200).json({ url: data.data[0].url });
 }
