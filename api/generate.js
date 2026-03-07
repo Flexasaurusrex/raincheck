@@ -2,28 +2,29 @@ export const config = { runtime: 'edge' };
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const OPENAI_API_KEY    = process.env.OPENAI_API_KEY;
+const ENGINE_PASSWORD   = process.env.ENGINE_PASSWORD || 'Rocky1';
+
+function isValidToken(token) {
+  try {
+    const decoded = atob(token);
+    const [prefix, , password] = decoded.split(':');
+    return prefix === 'raincheck' && password === ENGINE_PASSWORD;
+  } catch { return false; }
+}
 
 export default async function handler(req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders() });
-  }
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders() });
+  if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
 
-  if (req.method !== 'POST') {
-    return json({ error: 'Method not allowed' }, 405);
-  }
+  const body = await req.json();
+  const { token, action, topic, category, neighborhood, context, imagePrompt } = body;
 
-  const { action, topic, category, neighborhood, context, imagePrompt } = await req.json();
+  if (!token || !isValidToken(token)) return json({ error: 'Unauthorized' }, 401);
 
   try {
-    if (action === 'generate_story') {
-      return await generateStory({ topic, category, neighborhood, context });
-    }
-    if (action === 'generate_image') {
-      return await generateImage(imagePrompt);
-    }
-    if (action === 'find_stories') {
-      return await findSeattleStories();
-    }
+    if (action === 'find_stories')   return await findSeattleStories();
+    if (action === 'generate_story') return await generateStory({ topic, category, neighborhood, context });
+    if (action === 'generate_image') return await generateImage(imagePrompt);
     return json({ error: 'Unknown action' }, 400);
   } catch (e) {
     console.error(e);
@@ -31,70 +32,92 @@ export default async function handler(req) {
   }
 }
 
-// ── FIND SEATTLE STORIES via Claude web search ──
 async function findSeattleStories() {
   const today = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  // Step 1: Use web search to find real Seattle events
+  const searchRes = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': ANTHROPIC_API_KEY,
       'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'interleaved-thinking-2025-01-14'
+      'anthropic-beta': 'web-search-2025-03-05'
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      tools: [{
-        type: 'web_search_20250305',
-        name: 'web_search'
-      }],
-      system: `You are the editorial engine for Raincheck, Seattle's weekly local newsletter. Today is ${today}.
+      max_tokens: 2000,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      messages: [{
+        role: 'user',
+        content: `Search for things happening in Seattle this week (today is ${today}). Find 5 real specific local events, openings, or activities. Search for: Seattle events this week, Seattle restaurant openings, Seattle concerts, Seattle outdoor activities. Return a brief summary of what you find.`
+      }]
+    })
+  });
 
-Search the web for 5 real, specific things happening in Seattle THIS WEEK — things worth telling locals about. Focus on:
-- New restaurant/bar openings or notable specials
-- Live music, arts events, cultural happenings  
-- Outdoor activities, parks, seasonal things
-- Interesting local news (positive only — no crime/politics)
-- Cool new shops, pop-ups, markets
+  const searchData = await searchRes.json();
 
-For each story, write in Raincheck's voice: warm, witty, local, like a friend who lives here telling you about something great.
+  // Extract all text content from the response
+  let searchSummary = '';
+  for (const block of searchData.content || []) {
+    if (block.type === 'text') searchSummary += block.text + '\n';
+  }
 
-Return ONLY a valid JSON array, no markdown, no preamble:
+  // Step 2: Use that search summary to generate structured stories
+  const writeRes = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 3000,
+      system: `You are the editorial voice of Raincheck, Seattle's weekly local newsletter. 
+Write warm, witty, hyperlocal content. Be specific. Sound like a friend who lives in Seattle.
+You MUST return ONLY a valid JSON array. No markdown, no backticks, no preamble, no explanation. Just the JSON array.`,
+      messages: [{
+        role: 'user',
+        content: `Based on this Seattle news and events research, write 5 newsletter stories in Raincheck's voice:
+
+${searchSummary || 'Write about typical Seattle spring activities, new restaurant openings, music venues, outdoor spots, and cultural events.'}
+
+Return ONLY this JSON array (no other text):
 [
   {
     "category": "🍜 Food & Drink",
-    "headline": "...",
-    "body": "2-3 sentences max. Specific details. Why should locals care right now.",
-    "location": "Neighborhood · Day/Date or Hours",
-    "image_prompt_subject": "specific visual subject for woodblock illustration",
+    "headline": "punchy headline max 12 words",
+    "body": "2-3 sentences. Specific details. Why locals should care right now.",
+    "location": "Neighborhood · Day or Hours",
+    "image_prompt_subject": "specific visual subject for woodblock linocut illustration",
     "image_placeholder": "🍜"
   }
 ]
 
-Categories to choose from: 🍜 Food & Drink, 🎵 Music, 🌸 Outdoors, 🎨 Arts & Culture, 🏪 New Opening, 👨‍👩‍👧 Family, ⚽ Sports, 🎭 Theater`,
-      messages: [{ role: 'user', content: `Find 5 great Seattle stories for this week's Raincheck newsletter. Today is ${today}. Search for real current events and openings.` }]
+Use these categories as appropriate: 🍜 Food & Drink, 🎵 Music, 🌸 Outdoors, 🎨 Arts & Culture, 🏪 New Opening, 👨‍👩‍👧 Family, ⚽ Sports, 🎭 Theater`
+      }]
     })
   });
 
-  const data = await res.json();
-
-  // Extract text from response (may include tool use blocks)
+  const writeData = await writeRes.json();
   let text = '';
-  for (const block of data.content || []) {
+  for (const block of writeData.content || []) {
     if (block.type === 'text') text += block.text;
   }
 
-  // Parse JSON from response
-  const match = text.match(/\[[\s\S]*\]/);
-  if (!match) throw new Error('Could not parse stories from Claude response');
-  const stories = JSON.parse(match[0]);
+  // Clean and parse JSON
+  text = text.trim();
+  // Strip any markdown code fences if present
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
 
+  const match = text.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error('Could not parse stories from response');
+
+  const stories = JSON.parse(match[0]);
   return json({ stories });
 }
 
-// ── GENERATE SINGLE STORY ──
 async function generateStory({ topic, category, neighborhood, context }) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -106,21 +129,21 @@ async function generateStory({ topic, category, neighborhood, context }) {
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1000,
-      system: `You are the editorial voice of Raincheck, Seattle's weekly local newsletter. 
-Write warm, witty, hyperlocal content. Be specific. Sound like a friend who lives in Seattle telling you about something worth doing.
-Return ONLY valid JSON, no markdown backticks, no preamble.`,
+      system: `You are the editorial voice of Raincheck, Seattle's weekly local newsletter.
+Write warm, witty, hyperlocal content. Be specific. Sound like a friend who lives in Seattle.
+Return ONLY valid JSON, no markdown, no preamble, no backticks.`,
       messages: [{
         role: 'user',
         content: `Write a Raincheck story about: "${topic}"
 Category: ${category}
 Neighborhood: ${neighborhood || 'Seattle'}
-${context ? 'Additional context: ' + context : ''}
+${context ? 'Context: ' + context : ''}
 
-Return JSON:
+Return ONLY this JSON (no other text):
 {
-  "headline": "punchy headline, max 12 words",
-  "body": "2-3 sentences. Specific details. Why locals should care right now.",
-  "location": "${neighborhood || 'Seattle'} · timing/hours if relevant",
+  "headline": "punchy headline max 12 words",
+  "body": "2-3 sentences. Specific details. Why locals should care.",
+  "location": "${neighborhood || 'Seattle'} · timing if relevant",
   "image_prompt_subject": "specific visual for woodblock linocut illustration",
   "image_placeholder": "relevant emoji"
 }`
@@ -129,28 +152,18 @@ Return JSON:
   });
 
   const data = await res.json();
-  const text = (data.content?.[0]?.text || '').replace(/```json|```/g, '').trim();
-  const story = JSON.parse(text);
-  return json({ story });
+  let text = (data.content?.[0]?.text || '').trim();
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+  return json({ story: JSON.parse(text) });
 }
 
-// ── GENERATE DALL·E THUMBNAIL ──
 async function generateImage(imagePromptSubject) {
-  const fullPrompt = `Woodblock linocut print illustration, wet ink texture, deep teal and warm amber palette, Seattle rainy atmosphere, gritty vintage editorial style, high contrast, square crop — ${imagePromptSubject}`;
+  const prompt = `Woodblock linocut print illustration, wet ink texture, deep teal and warm amber palette, Seattle rainy atmosphere, gritty vintage editorial style, high contrast, square crop — ${imagePromptSubject}`;
 
   const res = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'dall-e-3',
-      prompt: fullPrompt,
-      n: 1,
-      size: '1024x1024',
-      response_format: 'url'
-    })
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_API_KEY}` },
+    body: JSON.stringify({ model: 'dall-e-3', prompt, n: 1, size: '1024x1024', response_format: 'url' })
   });
 
   const data = await res.json();
