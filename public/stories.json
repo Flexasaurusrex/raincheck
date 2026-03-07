@@ -1,0 +1,56 @@
+{
+  "issue": "001",
+  "week_of": "March 9, 2026",
+  "stories": [
+    {
+      "id": "story-001",
+      "hero": true,
+      "category": "🍜 Food & Drink",
+      "headline": "Tanaka Bros just opened their ramen counter in Capitol Hill — and the line is already wrapping the block",
+      "body": "The duo behind Westlake's beloved izakaya finally opened their standalone ramen spot on Pine. Early reports say the tonkotsu is the real deal. Counter service only, cash preferred, opens at 11am. Go early or go hungry.",
+      "location": "Capitol Hill · Tue–Sun",
+      "image": "",
+      "image_placeholder": "🍜"
+    },
+    {
+      "id": "story-002",
+      "hero": false,
+      "category": "🎵 Music",
+      "headline": "Neumos hosts a rare all-local lineup this Friday",
+      "body": "Five Seattle acts, $12 at the door. The kind of night you'll tell people about.",
+      "location": "Fri Mar 13 · Capitol Hill",
+      "image": "",
+      "image_placeholder": "🎵"
+    },
+    {
+      "id": "story-003",
+      "hero": false,
+      "category": "🌸 Outdoors",
+      "headline": "The cherry blossoms at UW are peaking early this year",
+      "body": "Go this weekend. Seriously. They'll be gone by Tuesday.",
+      "location": "This Weekend · UW Campus",
+      "image": "",
+      "image_placeholder": "🌸"
+    },
+    {
+      "id": "story-004",
+      "hero": false,
+      "category": "🎨 Arts & Culture",
+      "headline": "SAM's new Pacific Northwest retrospective opens Saturday",
+      "body": "Free admission opening weekend. Locals-only preview Friday night with RSVP.",
+      "location": "Sat Mar 14 · Downtown",
+      "image": "",
+      "image_placeholder": "🎨"
+    },
+    {
+      "id": "story-005",
+      "hero": false,
+      "category": "🏪 New Opening",
+      "headline": "Ballard's newest bookshop-café hybrid opens its doors",
+      "body": "Good espresso, used books, no wi-fi by design. Exactly what we needed.",
+      "location": "Now Open · Ballard",
+      "image": "",
+      "image_placeholder": "🏪"
+    }
+  ]
+}
