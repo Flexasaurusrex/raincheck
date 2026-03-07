@@ -79,7 +79,7 @@
     opacity: 0.12; filter: saturate(0.7) brightness(0.8);
   }
   .hero-image-bg::after {
-    content:'';
+    content:"";
     position:absolute; inset:0;
     background: linear-gradient(100deg, rgba(10,24,27,0.98) 0%, rgba(10,24,27,0.92) 45%, rgba(10,24,27,0.4) 70%, rgba(10,24,27,0.05) 100%);
   }
@@ -181,7 +181,7 @@
   .section-title em { font-family:'Lora',serif; font-style:italic; font-weight:400; color:var(--amber-glow); }
 
   .section-divider { display:flex; align-items:center; gap:1.2rem; padding:0 3rem; }
-  .section-divider::before,.section-divider::after { content:''; flex:1; height:1px; background:rgba(200,98,42,0.2); }
+  .section-divider::before,.section-divider::after { content:""; flex:1; height:1px; background:rgba(200,98,42,0.2); }
   .section-divider span { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--amber); white-space:nowrap; }
 
   /* THIS WEEK */
@@ -233,7 +233,7 @@
 
   /* HOW IT WORKS */
   .how-it-works { padding:5rem 3rem; background:var(--teal-mid); position:relative; overflow:hidden; }
-  .how-it-works::after { content:'SEATTLE'; position:absolute; font-family:'Alfa Slab One',serif; font-size:22vw; color:rgba(255,255,255,0.025); bottom:-2rem; right:-1rem; pointer-events:none; line-height:1; }
+  .how-it-works::after { content:"SEATTLE"; position:absolute; font-family:'Alfa Slab One',serif; font-size:22vw; color:rgba(255,255,255,0.025); bottom:-2rem; right:-1rem; pointer-events:none; line-height:1; }
   .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem; margin-top:3rem; position:relative; z-index:1; }
   .step { background:rgba(14,31,34,0.4); border:1px solid rgba(200,98,42,0.14); padding:2rem; border-radius:3px; transition:border-color 0.2s,background 0.2s; }
   .step:hover { border-color:rgba(200,98,42,0.4); background:rgba(14,31,34,0.6); }
@@ -247,7 +247,7 @@
   .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:rgba(0,0,0,0.3); border:2px solid rgba(0,0,0,0.3); border-radius:4px; overflow:hidden; margin-top:3rem; }
   .cat-item { background:var(--teal-mid); padding:2rem 1.5rem; text-align:center; transition:background 0.2s; cursor:pointer; position:relative; }
   .cat-item:hover { background:#356070; }
-  .cat-item::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--amber); transform:scaleX(0); transition:transform 0.2s; }
+  .cat-item::after { content:""; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--amber); transform:scaleX(0); transition:transform 0.2s; }
   .cat-item:hover::after { transform:scaleX(1); }
   .cat-icon { font-size:2rem; display:block; margin-bottom:0.8rem; }
   .cat-icon-img { width:80px; height:80px; border-radius:50%; object-fit:cover; display:block; margin:0 auto 0.8rem; border:2px solid rgba(200,98,42,0.25); transition:border-color 0.2s,transform 0.2s; }
@@ -257,7 +257,7 @@
 
   /* ADVERTISE */
   .advertise { padding:5rem 3rem; background:var(--ink); display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; position:relative; overflow:hidden; }
-  .advertise::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 100% 50%, rgba(200,98,42,0.05) 0%, transparent 70%); pointer-events:none; }
+  .advertise::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 100% 50%, rgba(200,98,42,0.05) 0%, transparent 70%); pointer-events:none; }
   .advertise-headline { font-family:'Alfa Slab One',serif; font-size:clamp(2rem,3.5vw,3rem); line-height:1.1; color:var(--cream); text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
   .advertise-headline em { font-family:'Lora',serif; font-style:italic; font-weight:400; color:var(--amber-glow); }
   .advertise-body { font-family:'Lora',serif; font-size:0.93rem; line-height:1.8; color:var(--mist); margin-top:1.5rem; }
@@ -271,7 +271,7 @@
 
   /* FOOTER CTA */
   .footer-cta { padding:7rem 3rem; text-align:center; background:var(--teal-mid); position:relative; overflow:hidden; }
-  .footer-cta::before { content:'☂'; position:absolute; font-size:28rem; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.04; pointer-events:none; line-height:1; }
+  .footer-cta::before { content:"☂"; position:absolute; font-size:28rem; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.04; pointer-events:none; line-height:1; }
   .footer-cta-raccoon { width:90px; height:90px; border-radius:50%; object-fit:cover; object-position:center; transform:scale(1.35); display:block; margin:0 auto 1.5rem; animation:sway 4s ease-in-out infinite; position:relative; z-index:1; filter:drop-shadow(0 8px 24px rgba(200,98,42,0.45)); overflow:hidden; }
   .footer-cta-title { font-family:'Alfa Slab One',serif; font-size:clamp(3rem,6vw,5.5rem); color:var(--cream); line-height:1; text-shadow:3px 3px 0 rgba(0,0,0,0.3); position:relative; z-index:1; }
   .footer-cta-sub { font-family:'Lora',serif; font-style:italic; font-size:1.1rem; color:var(--amber-glow); margin:0.8rem 0 2.5rem; position:relative; z-index:1; }
@@ -594,7 +594,7 @@
     <div class="section-eyebrow">For local businesses</div>
     <h2 class="advertise-headline">Reach Seattle when<br>they're <em>paying attention</em></h2>
     <p class="advertise-body">Raincheck readers open every issue. That's not a guess — it's a 60%+ open rate in a world where 20% is industry average. Your ad sits next to content people actually wanted. No algorithm. No bidding war. Just direct access to engaged locals with spending power.</p>
-    <a href="/cdn-cgi/l/email-protection#e4858097a496858d8a878c81878f97818590908881ca9c9d9e" class="advertise-cta">Get the media kit →</a>
+    <a href="mailto:ads@raincheckseattle.xyz" class="advertise-cta">Get the media kit →</a>
   </div>
   <div class="metrics-grid reveal" style="transition-delay:0.15s">
     <div class="metric-box"><div class="metric-val">60%+</div><div class="metric-desc">Avg. open rate</div></div>
@@ -647,7 +647,7 @@
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ── LOAD STORIES FROM stories.json ──
   async function loadStories() {
     try {
@@ -818,3 +818,10 @@
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
