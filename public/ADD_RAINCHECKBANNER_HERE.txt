@@ -1,0 +1,2 @@
+Add raincheckbanner.png to this folder before deploying.
+This is the hero banner illustration used on the landing page.

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raincheck — Content Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Barlow+Condensed:wght@400;600;700;800&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-deep: #1a3a3f;
+    --teal-mid:  #2a5560;
+    --amber:     #c8622a;
+    --amber-warm:#e07a3a;
+    --amber-glow:#f0a060;
+    --cream:     #f2ead8;
+    --ink:       #0e1f22;
+    --mist:      #8aacb5;
+    --success:   #4a9e6e;
+    --error:     #c0392b;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Lora', Georgia, serif;
+    min-height: 100vh;
+  }
+
+  /* GRAIN */
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:999; opacity:0.4;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:1rem 2rem;
+    background:rgba(10,24,27,0.95);
+    border-bottom:2px solid rgba(200,98,42,0.3);
+    position:sticky; top:0; z-index:100;
+  }
+
+  .topbar-brand { display:flex; align-items:center; gap:0.6rem; }
+  .topbar-brand img { width:34px; height:34px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.15); }
+  .topbar-name { font-family:'Alfa Slab One',serif; font-size:1.2rem; color:var(--cream); }
+  .topbar-sub { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); margin-left:0.3rem; }
+
+  .topbar-status { display:flex; align-items:center; gap:0.5rem; font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); }
+  .status-dot { width:7px; height:7px; border-radius:50%; background:var(--success); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* LAYOUT */
+  .engine {
+    display:grid;
+    grid-template-columns:380px 1fr;
+    min-height:calc(100vh - 60px);
+  }
+
+  /* LEFT PANEL — INPUT */
+  .panel-left {
+    background:var(--teal-deep);
+    border-right:1px solid rgba(200,98,42,0.2);
+    padding:2rem;
+    display:flex; flex-direction:column; gap:1.8rem;
+    overflow-y:auto; max-height:calc(100vh - 60px);
+  }
+
+  .panel-section-label {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.68rem; font-weight:800; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--amber); margin-bottom:0.6rem;
+  }
+
+  .field { display:flex; flex-direction:column; gap:0.5rem; }
+
+  label {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--mist);
+  }
+
+  input[type="text"], textarea, select {
+    background:rgba(255,255,255,0.06);
+    border:1.5px solid rgba(200,98,42,0.25);
+    border-radius:3px;
+    color:var(--cream);
+    font-family:'Lora',serif; font-size:0.9rem;
+    padding:0.7rem 0.9rem;
+    outline:none;
+    transition:border-color 0.2s, background 0.2s;
+    width:100%;
+  }
+
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color:var(--amber-glow);
+    background:rgba(255,255,255,0.09);
+  }
+
+  textarea { resize:vertical; min-height:90px; line-height:1.6; }
+
+  select option { background:var(--teal-deep); color:var(--cream); }
+
+  .input-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+
+  /* API KEY fields */
+  .apikey-field { position:relative; }
+  .apikey-field input { padding-right:2.5rem; font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; letter-spacing:0.05em; }
+  .apikey-toggle {
+    position:absolute; right:0.7rem; top:50%; transform:translateY(-50%);
+    background:none; border:none; cursor:pointer; color:var(--mist); font-size:0.85rem;
+    transition:color 0.2s;
+  }
+  .apikey-toggle:hover { color:var(--amber-glow); }
+
+  /* STYLE PROMPT preview */
+  .style-preview {
+    background:rgba(200,98,42,0.08);
+    border:1px solid rgba(200,98,42,0.2);
+    border-radius:3px;
+    padding:0.8rem;
+    font-family:'Lora',serif; font-style:italic; font-size:0.82rem; line-height:1.6;
+    color:rgba(242,234,216,0.6);
+  }
+
+  /* GENERATE BUTTON */
+  .btn-generate {
+    width:100%; padding:1rem;
+    background:var(--amber);
+    color:#fff;
+    border:none; border-radius:3px;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:0.9rem; font-weight:800; letter-spacing:0.18em; text-transform:uppercase;
+    cursor:pointer;
+    transition:background 0.2s, transform 0.1s;
+    box-shadow:0 4px 20px rgba(200,98,42,0.35);
+    position:relative; overflow:hidden;
+  }
+  .btn-generate:hover { background:var(--amber-warm); }
+  .btn-generate:active { transform:scale(0.98); }
+  .btn-generate:disabled { background:rgba(200,98,42,0.35); cursor:not-allowed; transform:none; }
+
+  .btn-generate .btn-inner { display:flex; align-items:center; justify-content:center; gap:0.6rem; }
+
+  /* Spinner */
+  .spinner {
+    width:16px; height:16px;
+    border:2px solid rgba(255,255,255,0.3);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:spin 0.7s linear infinite;
+    display:none;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* Progress steps */
+  .progress-steps {
+    display:none; flex-direction:column; gap:0.4rem;
+  }
+  .progress-step {
+    display:flex; align-items:center; gap:0.6rem;
+    font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+    color:rgba(138,172,181,0.5);
+    transition:color 0.3s;
+  }
+  .progress-step.active { color:var(--amber-glow); }
+  .progress-step.done { color:var(--success); }
+  .step-icon { font-size:0.85rem; width:16px; text-align:center; }
+
+  /* RIGHT PANEL — OUTPUT */
+  .panel-right {
+    background:var(--teal-mid);
+    padding:2.5rem;
+    overflow-y:auto; max-height:calc(100vh - 60px);
+    display:flex; flex-direction:column; gap:2rem;
+  }
+
+  .output-empty {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center; gap:1.2rem;
+    opacity:0.5;
+  }
+  .output-empty-icon { font-size:4rem; }
+  .output-empty-text { font-family:'Alfa Slab One',serif; font-size:1.8rem; color:var(--cream); line-height:1.1; }
+  .output-empty-sub { font-family:'Lora',serif; font-style:italic; font-size:0.95rem; color:var(--mist); }
+
+  /* STORY TILE CARD */
+  .story-card {
+    background:var(--teal-deep);
+    border:1px solid rgba(200,98,42,0.2);
+    border-radius:4px;
+    overflow:hidden;
+    animation:slideIn 0.5s ease;
+    display:flex; flex-direction:column;
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .story-card:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(0,0,0,0.4); }
+  @keyframes slideIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+
+  /* Square thumbnail at top */
+  .story-thumb {
+    position:relative; background:var(--ink);
+    width:100%; padding-top:100%; /* 1:1 square */
+    overflow:hidden; flex-shrink:0;
+  }
+  .story-thumb img {
+    position:absolute; inset:0;
+    width:100%; height:100%; object-fit:cover;
+  }
+  .thumb-loading {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.7rem;
+    color:var(--mist); font-family:'Barlow Condensed',sans-serif;
+    font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  }
+  .thumb-spinner {
+    width:28px; height:28px;
+    border:2px solid rgba(138,172,181,0.2);
+    border-top-color:var(--amber-glow);
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  .thumb-overlay {
+    position:absolute; bottom:0; left:0; right:0;
+    background:linear-gradient(transparent, rgba(10,24,27,0.85));
+    padding:0.5rem; text-align:center;
+    font-family:'Barlow Condensed',sans-serif; font-size:0.58rem; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--amber-glow);
+  }
+
+  /* Card header — cat badge + timestamp + actions */
+  .story-card-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:0.7rem 1rem;
+    background:rgba(0,0,0,0.25);
+    border-bottom:1px solid rgba(200,98,42,0.12);
+    flex-wrap:wrap; gap:0.4rem;
+  }
+  .story-card-meta { display:flex; align-items:center; gap:0.6rem; }
+  .story-cat-badge {
+    font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; font-weight:800;
+    letter-spacing:0.15em; text-transform:uppercase;
+    background:rgba(200,98,42,0.2); border:1px solid rgba(200,98,42,0.35);
+    color:var(--amber-glow); padding:0.18rem 0.55rem; border-radius:2px;
+  }
+  .story-timestamp { font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.45); }
+  .story-card-actions { display:flex; gap:0.4rem; }
+  .btn-action {
+    font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; font-weight:800;
+    letter-spacing:0.1em; text-transform:uppercase;
+    padding:0.25rem 0.6rem; border-radius:2px; cursor:pointer;
+    border:1px solid; transition:background 0.2s;
+  }
+  .btn-approve { background:rgba(74,158,110,0.15); border-color:rgba(74,158,110,0.4); color:#6fcf97; }
+  .btn-approve:hover { background:rgba(74,158,110,0.3); }
+  .btn-edit { background:rgba(200,98,42,0.12); border-color:rgba(200,98,42,0.35); color:var(--amber-glow); }
+  .btn-edit:hover { background:rgba(200,98,42,0.25); }
+  .btn-discard { background:rgba(192,57,43,0.1); border-color:rgba(192,57,43,0.3); color:#e07070; }
+  .btn-discard:hover { background:rgba(192,57,43,0.25); }
+
+  /* Text content below image */
+  .story-content { padding:1rem 1.1rem 0.8rem; flex:1; display:flex; flex-direction:column; }
+  .story-headline {
+    font-family:'Alfa Slab One',serif; font-size:1.05rem; color:var(--cream);
+    line-height:1.25; margin-bottom:0.6rem;
+    text-shadow:1px 1px 0 rgba(0,0,0,0.3);
+  }
+  .story-body {
+    font-family:'Lora',serif; font-size:0.82rem; line-height:1.7;
+    color:var(--mist); flex:1;
+  }
+
+  .story-footer {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:0.6rem 1.1rem;
+    border-top:1px solid rgba(200,98,42,0.1);
+    background:rgba(0,0,0,0.1);
+  }
+  .story-location {
+    font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.55);
+  }
+  .story-prompt-used {
+    font-family:'Lora',serif; font-style:italic; font-size:0.65rem;
+    color:rgba(138,172,181,0.3); text-align:right; max-width:160px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  /* Image prompt box */
+  .img-prompt-box {
+    padding:0.7rem 1.1rem;
+    background:rgba(200,98,42,0.05);
+    border-top:1px solid rgba(200,98,42,0.1);
+    font-family:'Lora',serif; font-style:italic; font-size:0.72rem;
+    line-height:1.55; color:rgba(242,234,216,0.4);
+  }
+  .img-prompt-box strong { color:var(--amber-glow); font-style:normal; font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; }
+
+  /* QUEUE */
+  .queue-header {
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .queue-title { font-family:'Alfa Slab One',serif; font-size:1.4rem; color:var(--cream); }
+  .queue-count {
+    font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:800;
+    letter-spacing:0.15em; text-transform:uppercase;
+    background:rgba(200,98,42,0.2); border:1px solid rgba(200,98,42,0.35);
+    color:var(--amber-glow); padding:0.2rem 0.7rem; border-radius:2px;
+  }
+
+  /* TILE GRID */
+  #story-queue {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* TOAST */
+  .toast {
+    position:fixed; bottom:2rem; right:2rem;
+    background:var(--teal-deep); border:1px solid rgba(200,98,42,0.4);
+    border-left:3px solid var(--amber);
+    padding:0.8rem 1.2rem;
+    border-radius:3px;
+    font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--cream);
+    box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    z-index:500;
+    transform:translateY(80px); opacity:0;
+    transition:transform 0.3s ease, opacity 0.3s ease;
+  }
+  .toast.show { transform:translateY(0); opacity:1; }
+  .toast.success { border-left-color:var(--success); }
+  .toast.error { border-left-color:var(--error); }
+
+  /* DIVIDER */
+  hr.panel-hr { border:none; border-top:1px solid rgba(200,98,42,0.15); margin:0 -2rem; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(200,98,42,0.3); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <img src="rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+    <span class="topbar-name">Raincheck</span>
+    <span class="topbar-sub">Content Engine</span>
+  </div>
+  <div class="topbar-status">
+    <div class="status-dot"></div>
+    Rocky is ready
+  </div>
+</div>
+
+<div class="engine">
+
+  <!-- LEFT: INPUT PANEL -->
+  <div class="panel-left">
+
+    <div>
+      <div class="panel-section-label">🔑 API Keys</div>
+      <div style="display:flex;flex-direction:column;gap:0.8rem;">
+        <div class="field">
+          <label>Anthropic API Key</label>
+          <div class="apikey-field">
+            <input type="password" id="anthropic-key" placeholder="sk-ant-..." />
+            <button class="apikey-toggle" onclick="toggleKey('anthropic-key')">👁</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>OpenAI API Key <span style="font-size:0.65rem;color:rgba(138,172,181,0.5);font-weight:400;text-transform:none;letter-spacing:0">(for DALL·E thumbnails)</span></label>
+          <div class="apikey-field">
+            <input type="password" id="openai-key" placeholder="sk-..." />
+            <button class="apikey-toggle" onclick="toggleKey('openai-key')">👁</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="panel-hr">
+
+    <div>
+      <div class="panel-section-label">📝 Story Input</div>
+      <div style="display:flex;flex-direction:column;gap:0.8rem;">
+        <div class="field">
+          <label>Event / Topic</label>
+          <input type="text" id="topic" placeholder="e.g. New ramen spot opens on Capitol Hill" />
+        </div>
+        <div class="input-row">
+          <div class="field">
+            <label>Category</label>
+            <select id="category">
+              <option value="Food & Drink">🍽️ Food & Drink</option>
+              <option value="Music & Nightlife">🎵 Music</option>
+              <option value="Outdoors">🏔️ Outdoors</option>
+              <option value="Arts & Culture">🎭 Arts & Culture</option>
+              <option value="Family">👨‍👩‍👧 Family</option>
+              <option value="Shopping">🛍️ Shopping</option>
+              <option value="Sports">⚽ Sports</option>
+              <option value="Editor's Pick">🦝 Editor's Pick</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Neighborhood</label>
+            <input type="text" id="neighborhood" placeholder="e.g. Capitol Hill" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Extra Context <span style="font-size:0.65rem;color:rgba(138,172,181,0.5);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <textarea id="context" placeholder="Any extra details — hours, price, vibe, what makes it worth going..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <hr class="panel-hr">
+
+    <div>
+      <div class="panel-section-label">🎨 Thumbnail Style</div>
+      <div class="style-preview" id="style-preview">
+        Woodblock linocut print illustration, wet ink texture, deep teal and warm amber palette, Seattle rainy atmosphere, gritty vintage editorial style, circular crop — <em id="style-subject">your topic here</em>
+      </div>
+      <div class="field" style="margin-top:0.8rem;">
+        <label>Style Override <span style="font-size:0.65rem;color:rgba(138,172,181,0.5);font-weight:400;text-transform:none;letter-spacing:0">(optional — appended to Rocky style)</span></label>
+        <input type="text" id="style-override" placeholder="e.g. nighttime, neon signs, heavy rain..." />
+      </div>
+    </div>
+
+    <hr class="panel-hr">
+
+    <!-- PROGRESS -->
+    <div class="progress-steps" id="progress-steps">
+      <div class="progress-step" id="step-story"><span class="step-icon">✍️</span> Drafting story with Claude</div>
+      <div class="progress-step" id="step-prompt"><span class="step-icon">🎨</span> Building image prompt</div>
+      <div class="progress-step" id="step-image"><span class="step-icon">🖼️</span> Generating thumbnail with DALL·E</div>
+      <div class="progress-step" id="step-done"><span class="step-icon">✅</span> Story ready for review</div>
+    </div>
+
+    <button class="btn-generate" id="btn-generate" onclick="generateStory()">
+      <div class="btn-inner">
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-label">Generate Story + Thumbnail</span>
+      </div>
+    </button>
+
+  </div>
+
+  <!-- RIGHT: OUTPUT PANEL -->
+  <div class="panel-right" id="panel-right">
+
+    <div class="output-empty" id="output-empty">
+      <div class="output-empty-icon">🦝</div>
+      <div class="output-empty-text">Rocky's waiting<br>for a story.</div>
+      <div class="output-empty-sub">Fill in the details on the left<br>and hit Generate.</div>
+    </div>
+
+    <div id="queue-wrap" style="display:none;flex-direction:column;gap:2rem;">
+      <div class="queue-header">
+        <div class="queue-title">Story Queue</div>
+        <div class="queue-count" id="queue-count">0 stories</div>
+      </div>
+      <div id="story-queue" style="display:flex;flex-direction:column;gap:1.5rem;"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const ROCKY_STYLE = "Woodblock linocut print illustration, wet ink texture, deep teal and warm amber palette, Seattle rainy atmosphere, gritty vintage editorial style, high contrast, circular crop";
+
+  let storyCount = 0;
+
+  // Live style preview
+  document.getElementById('topic').addEventListener('input', function() {
+    document.getElementById('style-subject').textContent = this.value || 'your topic here';
+  });
+
+  function toggleKey(id) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
+
+  function setStep(stepId, state) {
+    const el = document.getElementById(stepId);
+    el.className = 'progress-step ' + state;
+    if (state === 'active') {
+      el.querySelector('.step-icon').style.animation = 'pulse 1s infinite';
+    }
+  }
+
+  function showToast(msg, type='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => t.className = 'toast', 3000);
+  }
+
+  function formatTime() {
+    return new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  async function generateStory() {
+    const anthropicKey = document.getElementById('anthropic-key').value.trim();
+    const openaiKey    = document.getElementById('openai-key').value.trim();
+    const topic        = document.getElementById('topic').value.trim();
+    const category     = document.getElementById('category').value;
+    const neighborhood = document.getElementById('neighborhood').value.trim();
+    const context      = document.getElementById('context').value.trim();
+    const styleOverride= document.getElementById('style-override').value.trim();
+
+    if (!anthropicKey) { showToast('Add your Anthropic API key', 'error'); return; }
+    if (!topic)        { showToast('Enter a topic first', 'error'); return; }
+
+    // UI: loading state
+    const btn = document.getElementById('btn-generate');
+    btn.disabled = true;
+    document.getElementById('spinner').style.display = 'block';
+    document.getElementById('btn-label').textContent = 'Generating...';
+    document.getElementById('progress-steps').style.display = 'flex';
+    setStep('step-story', 'active');
+    setStep('step-prompt', '');
+    setStep('step-image', '');
+    setStep('step-done', '');
+
+    // Show queue
+    document.getElementById('output-empty').style.display = 'none';
+    document.getElementById('queue-wrap').style.display = 'flex';
+
+    // Create card placeholder
+    storyCount++;
+    const cardId = 'card-' + storyCount;
+    const card = document.createElement('div');
+    card.className = 'story-card';
+    card.id = cardId;
+    card.innerHTML = `
+      <div class="story-thumb" id="thumb-${cardId}">
+        <div class="thumb-loading">
+          <div class="thumb-spinner"></div>
+          <span>Generating art...</span>
+        </div>
+      </div>
+      <div class="story-card-header">
+        <div class="story-card-meta">
+          <span class="story-cat-badge">${category}</span>
+          <span class="story-timestamp">${formatTime()}</span>
+        </div>
+        <div class="story-card-actions">
+          <button class="btn-action btn-approve" onclick="approveStory('${cardId}')">✓</button>
+          <button class="btn-action btn-edit" onclick="editStory('${cardId}')">Edit</button>
+          <button class="btn-action btn-discard" onclick="discardStory('${cardId}')">✕</button>
+        </div>
+      </div>
+      <div class="story-content">
+        <div class="story-headline" id="headline-${cardId}" style="color:var(--mist);font-family:'Lora',serif;font-style:italic;font-size:0.85rem;font-weight:400;">Rocky is writing...</div>
+        <div class="story-body" id="body-${cardId}"></div>
+      </div>
+      <div class="img-prompt-box" id="imgprompt-${cardId}" style="display:none;">
+        <strong>Prompt:</strong> <span></span>
+      </div>
+      <div class="story-footer">
+        <div class="story-location" id="loc-${cardId}">${neighborhood || 'Seattle'}</div>
+        <div class="story-prompt-used" title="${topic}">${topic}</div>
+      </div>
+    `;
+    document.getElementById('story-queue').prepend(card);
+    updateCount();
+
+    // STEP 1: Generate story with Claude
+    let headline = '', body = '', imagePrompt = '';
+    try {
+      const storyRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': anthropicKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are the editorial voice of Raincheck, Seattle's beloved weekly newsletter. Your mascot is Rocky the Raincheck Raccoon. Write in a warm, witty, locally-savvy tone — like a friend who actually lives in Seattle and knows the good spots. No politics, no crime, just fun things worth doing. Return ONLY valid JSON with these exact fields: {"headline": "...", "body": "2-3 sentences, punchy and local", "image_prompt_subject": "8-12 word visual subject for illustration", "location_tag": "Neighborhood · Days/Hours if known"}`,
+          messages: [{
+            role: 'user',
+            content: `Write a Raincheck story card.
+Topic: ${topic}
+Category: ${category}
+Neighborhood: ${neighborhood || 'Seattle'}
+${context ? 'Extra context: ' + context : ''}
+
+Return only the JSON object, no markdown, no backticks.`
+          }]
+        })
+      });
+
+      const storyData = await storyRes.json();
+      if (storyData.error) throw new Error(storyData.error.message);
+
+      const raw = storyData.content[0].text.trim().replace(/```json|```/g,'');
+      const parsed = JSON.parse(raw);
+      headline    = parsed.headline || topic;
+      body        = parsed.body || '';
+      imagePrompt = parsed.image_prompt_subject || topic;
+      const locationTag = parsed.location_tag || (neighborhood || 'Seattle');
+
+      // Update card with story text
+      document.getElementById('headline-' + cardId).style.cssText = '';
+      document.getElementById('headline-' + cardId).textContent = headline;
+      document.getElementById('body-' + cardId).textContent = body;
+      document.getElementById('loc-' + cardId).textContent = locationTag;
+
+      setStep('step-story', 'done');
+      setStep('step-prompt', 'active');
+
+    } catch(err) {
+      console.error(err);
+      document.getElementById('headline-' + cardId).textContent = topic;
+      document.getElementById('body-' + cardId).textContent = 'Story draft failed — check your API key or try again.';
+      showToast('Claude error: ' + err.message, 'error');
+      resetBtn();
+      return;
+    }
+
+    // STEP 2: Build full image prompt
+    const fullImagePrompt = `${ROCKY_STYLE}${styleOverride ? ', ' + styleOverride : ''} — ${imagePrompt}`;
+
+    const imgPromptBox = document.getElementById('imgprompt-' + cardId);
+    imgPromptBox.style.display = 'block';
+    imgPromptBox.querySelector('span').textContent = fullImagePrompt;
+
+    setStep('step-prompt', 'done');
+    setStep('step-image', 'active');
+
+    // STEP 3: Generate thumbnail with DALL·E
+    if (openaiKey) {
+      try {
+        const imgRes = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + openaiKey },
+          body: JSON.stringify({
+            model: 'dall-e-3',
+            prompt: fullImagePrompt,
+            n: 1,
+            size: '1024x1024',
+            quality: 'standard'
+          })
+        });
+
+        const imgData = await imgRes.json();
+        if (imgData.error) throw new Error(imgData.error.message);
+
+        const imageUrl = imgData.data[0].url;
+        const thumbEl = document.getElementById('thumb-' + cardId);
+        thumbEl.innerHTML = `
+          <img src="${imageUrl}" alt="${headline}" />
+          <div class="thumb-overlay">Rocky Style ✓</div>
+        `;
+
+        setStep('step-image', 'done');
+      } catch(err) {
+        console.error(err);
+        const thumbEl = document.getElementById('thumb-' + cardId);
+        thumbEl.innerHTML = `<div class="thumb-loading" style="padding:1rem;text-align:center;"><span style="font-size:2rem">🎨</span><br><span style="color:var(--error)">Image failed</span><br><span style="font-size:0.6rem;opacity:0.6">${err.message}</span></div>`;
+        showToast('DALL·E error — story still saved', 'error');
+      }
+    } else {
+      // No OpenAI key — show placeholder
+      const thumbEl = document.getElementById('thumb-' + cardId);
+      thumbEl.innerHTML = `
+        <div class="thumb-loading" style="padding:1rem;text-align:center;gap:0.5rem;">
+          <span style="font-size:2.5rem">🎨</span>
+          <span>Add OpenAI key<br>for thumbnails</span>
+        </div>
+      `;
+      setStep('step-image', 'done');
+    }
+
+    setStep('step-done', 'done');
+    showToast('Story ready for review ✓', 'success');
+    resetBtn();
+  }
+
+  function resetBtn() {
+    const btn = document.getElementById('btn-generate');
+    btn.disabled = false;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('btn-label').textContent = 'Generate Story + Thumbnail';
+  }
+
+  function updateCount() {
+    const cards = document.querySelectorAll('.story-card');
+    document.getElementById('queue-count').textContent = cards.length + (cards.length === 1 ? ' story' : ' stories');
+  }
+
+  function approveStory(id) {
+    const card = document.getElementById(id);
+    card.style.borderColor = 'rgba(74,158,110,0.5)';
+    card.style.boxShadow = '0 0 0 1px rgba(74,158,110,0.3)';
+    card.querySelector('.story-card-header').style.background = 'rgba(74,158,110,0.08)';
+    showToast('Story approved — ready to publish ✓', 'success');
+  }
+
+  function editStory(id) {
+    const bodyEl = document.getElementById('body-' + id);
+    const headlineEl = document.getElementById('headline-' + id);
+    if (bodyEl.contentEditable === 'true') {
+      bodyEl.contentEditable = 'false';
+      headlineEl.contentEditable = 'false';
+      bodyEl.style.outline = '';
+      headlineEl.style.outline = '';
+      showToast('Edits saved', 'success');
+    } else {
+      bodyEl.contentEditable = 'true';
+      headlineEl.contentEditable = 'true';
+      bodyEl.style.outline = '1px dashed rgba(200,98,42,0.4)';
+      bodyEl.style.outline = '1px dashed rgba(200,98,42,0.4)';
+      headlineEl.style.outline = '1px dashed rgba(200,98,42,0.4)';
+      bodyEl.focus();
+      showToast('Click text to edit — click Edit again to save');
+    }
+  }
+
+  function discardStory(id) {
+    const card = document.getElementById(id);
+    card.style.transition = 'opacity 0.3s, transform 0.3s';
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(-20px)';
+    setTimeout(() => { card.remove(); updateCount(); }, 320);
+    showToast('Story discarded');
+  }
+</script>
+</body>
+</html>

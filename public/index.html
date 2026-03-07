@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raincheck — Where the Drizzle Becomes Inspiration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Alfa+Slab+One&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-deep:   #1a3a3f;
+    --teal-mid:    #2a5560;
+    --teal-light:  #3d7a87;
+    --amber:       #c8622a;
+    --amber-warm:  #e07a3a;
+    --amber-glow:  #f0a060;
+    --cream:       #f2ead8;
+    --cream-dark:  #e0d4bc;
+    --parchment:   #d4c8a8;
+    --ink:         #0e1f22;
+    --warm-white:  #faf6ee;
+    --rust:        #8b3a1a;
+    --mist:        #8aacb5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--teal-deep);
+    color: var(--cream);
+    font-family: 'Lora', Georgia, serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.45;
+  }
+
+  /* Rain */
+  .rain-container { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; overflow:hidden; }
+  .raindrop { position:absolute; top:-30px; width:1.5px; background:linear-gradient(to bottom, transparent, rgba(255,255,255,0.14)); border-radius:2px; animation:fall linear infinite; }
+  @keyframes fall { to { transform: translateY(110vh) translateX(6px); } }
+
+  /* NAV */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:200;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 3rem;
+    background: rgba(10,24,27,0.93);
+    backdrop-filter: blur(16px);
+    border-bottom: 2px solid rgba(200,98,42,0.3);
+  }
+  .nav-logo { display:flex; align-items:center; gap:0.5rem; }
+  .nav-raccoon { width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.15); flex-shrink:0; }
+  .nav-logo-text { font-family:'Alfa Slab One',serif; font-size:1.4rem; color:var(--cream); text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.82rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
+  .nav-links a:hover { color:var(--amber-glow); }
+  .nav-cta { background:var(--amber) !important; color:var(--warm-white) !important; padding:0.45rem 1.2rem !important; border-radius:3px; }
+  .nav-cta:hover { background:var(--amber-warm) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    position: relative; overflow: hidden;
+    display: grid; grid-template-columns: 55% 45%;
+    align-items: center;
+  }
+
+  .hero-image-bg {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .hero-image-bg img {
+    width:100%; height:100%; object-fit:cover; object-position:center top;
+    opacity: 0.12; filter: saturate(0.7) brightness(0.8);
+  }
+  .hero-image-bg::after {
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(100deg, rgba(10,24,27,0.98) 0%, rgba(10,24,27,0.92) 45%, rgba(10,24,27,0.4) 70%, rgba(10,24,27,0.05) 100%);
+  }
+
+  .hero-left {
+    position: relative; z-index: 10;
+    padding: 10rem 2rem 5rem 4rem;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(200,98,42,0.12);
+    border: 1px solid rgba(200,98,42,0.38);
+    padding: 0.38rem 0.9rem; border-radius: 2px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--amber-glow); margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 0.7s ease forwards 0.2s;
+  }
+
+  .hero-title {
+    font-family: 'Alfa Slab One', serif;
+    font-size: clamp(5rem, 9vw, 8rem);
+    line-height: 0.9; letter-spacing: 0.01em;
+    color: var(--cream);
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.5), 0 0 80px rgba(200,98,42,0.15);
+    opacity: 0; animation: fadeUp 0.7s ease forwards 0.35s;
+  }
+
+  .hero-tagline {
+    font-family: 'Lora', serif; font-style: italic; font-size: 1.3rem;
+    color: var(--amber-glow); margin-top: 1.2rem;
+    opacity: 0; animation: fadeUp 0.7s ease forwards 0.5s;
+  }
+
+  .hero-desc {
+    font-family: 'Lora', serif; font-size: 1rem; line-height: 1.8;
+    color: var(--mist); margin-top: 1.4rem; max-width: 420px;
+    opacity: 0; animation: fadeUp 0.7s ease forwards 0.65s;
+  }
+
+  .hero-form {
+    display: flex; margin-top: 2.5rem; max-width: 420px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    opacity: 0; animation: fadeUp 0.7s ease forwards 0.8s;
+  }
+  .hero-form input {
+    flex:1; padding:1rem 1.2rem;
+    background:rgba(242,234,216,0.08); border:1.5px solid rgba(200,98,42,0.38); border-right:none; border-radius:3px 0 0 3px;
+    color:var(--cream); font-family:'Barlow Condensed',sans-serif; font-size:1rem; outline:none; transition:border-color 0.2s,background 0.2s;
+  }
+  .hero-form input::placeholder { color:rgba(138,172,181,0.55); }
+  .hero-form input:focus { border-color:var(--amber-glow); background:rgba(242,234,216,0.13); }
+  .hero-form button {
+    padding:1rem 1.5rem; background:var(--amber); color:var(--warm-white); border:none; border-radius:0 3px 3px 0;
+    font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:800; letter-spacing:0.15em; text-transform:uppercase;
+    cursor:pointer; transition:background 0.2s; white-space:nowrap;
+  }
+  .hero-form button:hover { background:var(--amber-warm); }
+
+  .hero-proof {
+    display:flex; gap:2.5rem; margin-top:2.5rem;
+    opacity:0; animation:fadeUp 0.7s ease forwards 1s;
+  }
+  .proof-num { font-family:'Alfa Slab One',serif; font-size:1.8rem; color:var(--cream); line-height:1; }
+  .proof-label { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); margin-top:0.2rem; }
+
+  /* Right side: banner image displayed prominently */
+  .hero-right {
+    position: relative; z-index: 5;
+    height: 100vh; display:flex; align-items:center; justify-content:center;
+    padding: 7rem 3rem 3rem 1rem;
+  }
+  .hero-right-inner {
+    position: relative; width:100%;
+    opacity: 0; animation: fadeIn 1s ease forwards 0.9s;
+  }
+  .hero-right-inner img {
+    width:100%; height:auto; border-radius:4px;
+    box-shadow: -16px 16px 50px rgba(0,0,0,0.65), 0 0 0 1.5px rgba(200,98,42,0.25);
+  }
+  .hero-right-caption {
+    position: absolute; bottom:-1.5rem; right:0;
+    font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    color:rgba(138,172,181,0.45);
+  }
+
+  /* AMBER STRIPE */
+  .stripe {
+    background:var(--amber); padding:0.55rem 3rem;
+    display:flex; align-items:center; gap:1.8rem; overflow:hidden;
+  }
+  .stripe-text { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--ink); white-space:nowrap; }
+  .stripe-dot { width:4px; height:4px; background:rgba(14,31,34,0.35); border-radius:50%; flex-shrink:0; }
+
+  /* SECTION HELPERS */
+  .section-eyebrow { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:800; letter-spacing:0.25em; text-transform:uppercase; color:var(--amber); margin-bottom:0.5rem; }
+  .section-title { font-family:'Alfa Slab One',serif; font-size:clamp(2rem,4vw,3.2rem); color:var(--cream); line-height:1; text-shadow:2px 2px 0 rgba(0,0,0,0.3); }
+  .section-title em { font-family:'Lora',serif; font-style:italic; font-weight:400; color:var(--amber-glow); }
+
+  .section-divider { display:flex; align-items:center; gap:1.2rem; padding:0 3rem; }
+  .section-divider::before,.section-divider::after { content:''; flex:1; height:1px; background:rgba(200,98,42,0.2); }
+  .section-divider span { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--amber); white-space:nowrap; }
+
+  /* THIS WEEK */
+  .this-week { padding:5rem 3rem; background:var(--teal-deep); }
+  .section-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:2.5rem; }
+  .issue-tag { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); border:1px solid rgba(138,172,181,0.28); padding:0.3rem 0.8rem; border-radius:2px; }
+
+  /* STORY GRID — 3 col tile layout */
+  .cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:rgba(0,0,0,0.35); border:2px solid rgba(0,0,0,0.35); border-radius:4px; overflow:hidden; }
+  .card { background:var(--teal-mid); position:relative; overflow:hidden; transition:background 0.2s; cursor:pointer; display:flex; flex-direction:column; text-decoration:none; }
+  .card:hover { background:#356070; }
+  .card--hero { grid-column:span 2; }
+
+  /* Square image top of every card */
+  .card-img-wrap { position:relative; width:100%; padding-top:100%; overflow:hidden; background:var(--ink); flex-shrink:0; }
+  .card--hero .card-img-wrap { padding-top:50%; }
+  .card-img-wrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform 0.4s ease; }
+  .card:hover .card-img-wrap img { transform:scale(1.04); }
+  .card-img-placeholder { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3rem; background:var(--teal-deep); }
+
+  /* Amber bar on hover */
+  .card-bar { position:absolute; top:0; left:0; width:100%; height:3px; background:var(--amber); transform:scaleX(0); transform-origin:left; transition:transform 0.25s ease; z-index:2; }
+  .card:hover .card-bar { transform:scaleX(1); }
+
+  /* Text below image */
+  .card-text { padding:1.2rem 1.4rem 2.2rem; flex:1; display:flex; flex-direction:column; }
+  .card--hero .card-text { padding:1.4rem 1.8rem 2.4rem; }
+  .card-cat { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:800; letter-spacing:0.2em; text-transform:uppercase; color:var(--amber-glow); margin-bottom:0.5rem; }
+  .card-title { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; line-height:1.35; color:var(--cream); margin-bottom:0.6rem; }
+  .card--hero .card-title { font-size:1.4rem; line-height:1.25; }
+  .card-body { font-family:'Lora',serif; font-size:0.83rem; line-height:1.7; color:var(--mist); flex:1; }
+  .card-loc { font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.42); margin-top:0.7rem; }
+
+  /* MASCOT */
+  .mascot-band {
+    background:var(--ink); border-top:2px solid rgba(200,98,42,0.25); border-bottom:2px solid rgba(200,98,42,0.25);
+    padding:4rem 3rem; display:grid; grid-template-columns:auto 1fr; gap:4rem; align-items:center; position:relative; overflow:hidden;
+  }
+  .mascot-band::before { display:none; }
+  .mascot-watermark { position:absolute; font-size:20rem; right:-1rem; bottom:-4rem; opacity:0.035; line-height:1; pointer-events:none; width:320px; height:320px; border-radius:50%; object-fit:cover; filter:grayscale(1); }
+  .mascot-emoji { width:160px; height:160px; border-radius:50%; object-fit:cover; border:4px solid rgba(255,255,255,0.18); filter:drop-shadow(0 12px 30px rgba(200,98,42,0.5)); animation:sway 4s ease-in-out infinite; flex-shrink:0; }
+  @keyframes sway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+  .mascot-title { font-family:'Alfa Slab One',serif; font-size:2.4rem; color:var(--cream); line-height:1.1; text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
+  .mascot-title span { color:var(--amber-glow); }
+  .mascot-body { font-family:'Lora',serif; font-style:italic; font-size:1rem; line-height:1.8; color:var(--mist); max-width:540px; margin-top:1rem; }
+  .mascot-pills { display:flex; gap:0.8rem; margin-top:1.5rem; flex-wrap:wrap; }
+  .pill { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; background:rgba(200,98,42,0.12); border:1px solid rgba(200,98,42,0.32); color:var(--amber-glow); padding:0.32rem 0.8rem; border-radius:2px; }
+
+  /* HOW IT WORKS */
+  .how-it-works { padding:5rem 3rem; background:var(--teal-mid); position:relative; overflow:hidden; }
+  .how-it-works::after { content:'SEATTLE'; position:absolute; font-family:'Alfa Slab One',serif; font-size:22vw; color:rgba(255,255,255,0.025); bottom:-2rem; right:-1rem; pointer-events:none; line-height:1; }
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem; margin-top:3rem; position:relative; z-index:1; }
+  .step { background:rgba(14,31,34,0.4); border:1px solid rgba(200,98,42,0.14); padding:2rem; border-radius:3px; transition:border-color 0.2s,background 0.2s; }
+  .step:hover { border-color:rgba(200,98,42,0.4); background:rgba(14,31,34,0.6); }
+  .step-num { font-family:'Alfa Slab One',serif; font-size:3.2rem; color:rgba(200,98,42,0.22); line-height:1; margin-bottom:0.8rem; }
+  .step-icon { font-size:1.7rem; margin-bottom:0.7rem; }
+  .step-title { font-family:'Barlow Condensed',sans-serif; font-size:1.05rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--cream); margin-bottom:0.6rem; }
+  .step-body { font-family:'Lora',serif; font-size:0.88rem; line-height:1.7; color:var(--mist); }
+
+  /* CATEGORIES */
+  .categories { padding:5rem 3rem; background:var(--teal-deep); }
+  .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:rgba(0,0,0,0.3); border:2px solid rgba(0,0,0,0.3); border-radius:4px; overflow:hidden; margin-top:3rem; }
+  .cat-item { background:var(--teal-mid); padding:2rem 1.5rem; text-align:center; transition:background 0.2s; cursor:pointer; position:relative; }
+  .cat-item:hover { background:#356070; }
+  .cat-item::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--amber); transform:scaleX(0); transition:transform 0.2s; }
+  .cat-item:hover::after { transform:scaleX(1); }
+  .cat-icon { font-size:2rem; display:block; margin-bottom:0.8rem; }
+  .cat-name { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--cream); }
+  .cat-sub { font-family:'Lora',serif; font-style:italic; font-size:0.73rem; color:var(--mist); margin-top:0.3rem; }
+
+  /* ADVERTISE */
+  .advertise { padding:5rem 3rem; background:var(--ink); display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; position:relative; overflow:hidden; }
+  .advertise::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 100% 50%, rgba(200,98,42,0.05) 0%, transparent 70%); pointer-events:none; }
+  .advertise-headline { font-family:'Alfa Slab One',serif; font-size:clamp(2rem,3.5vw,3rem); line-height:1.1; color:var(--cream); text-shadow:2px 2px 0 rgba(0,0,0,0.4); }
+  .advertise-headline em { font-family:'Lora',serif; font-style:italic; font-weight:400; color:var(--amber-glow); }
+  .advertise-body { font-family:'Lora',serif; font-size:0.93rem; line-height:1.8; color:var(--mist); margin-top:1.5rem; }
+  .advertise-cta { display:inline-block; margin-top:2rem; padding:0.9rem 2rem; background:var(--amber); color:var(--warm-white); font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:800; letter-spacing:0.18em; text-transform:uppercase; text-decoration:none; border-radius:3px; transition:background 0.2s; box-shadow:0 4px 20px rgba(200,98,42,0.3); }
+  .advertise-cta:hover { background:var(--amber-warm); }
+  .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+  .metric-box { background:rgba(42,85,96,0.38); border:1px solid rgba(200,98,42,0.18); padding:1.5rem; border-radius:3px; transition:border-color 0.2s; }
+  .metric-box:hover { border-color:rgba(200,98,42,0.5); }
+  .metric-val { font-family:'Alfa Slab One',serif; font-size:2.1rem; color:var(--amber-glow); line-height:1; }
+  .metric-desc { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--mist); margin-top:0.4rem; }
+
+  /* FOOTER CTA */
+  .footer-cta { padding:7rem 3rem; text-align:center; background:var(--teal-mid); position:relative; overflow:hidden; }
+  .footer-cta::before { content:'☂'; position:absolute; font-size:28rem; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.04; pointer-events:none; line-height:1; }
+  .footer-cta-raccoon { width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,0.2); display:block; margin:0 auto 1.5rem; animation:sway 4s ease-in-out infinite; position:relative; z-index:1; filter:drop-shadow(0 8px 24px rgba(200,98,42,0.45)); }
+  .footer-cta-title { font-family:'Alfa Slab One',serif; font-size:clamp(3rem,6vw,5.5rem); color:var(--cream); line-height:1; text-shadow:3px 3px 0 rgba(0,0,0,0.3); position:relative; z-index:1; }
+  .footer-cta-sub { font-family:'Lora',serif; font-style:italic; font-size:1.1rem; color:var(--amber-glow); margin:0.8rem 0 2.5rem; position:relative; z-index:1; }
+  .footer-form { display:flex; max-width:420px; margin:0 auto; position:relative; z-index:1; box-shadow:0 10px 40px rgba(0,0,0,0.4); }
+  .footer-form input { flex:1; padding:1rem 1.2rem; background:rgba(14,31,34,0.7); border:1.5px solid rgba(200,98,42,0.38); border-right:none; border-radius:3px 0 0 3px; color:var(--cream); font-family:'Barlow Condensed',sans-serif; font-size:1rem; outline:none; transition:border-color 0.2s; }
+  .footer-form input::placeholder { color:rgba(138,172,181,0.5); }
+  .footer-form input:focus { border-color:var(--amber-glow); }
+  .footer-form button { padding:1rem 1.5rem; background:var(--amber); color:var(--warm-white); border:none; border-radius:0 3px 3px 0; font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .footer-form button:hover { background:var(--amber-warm); }
+
+  .success-msg { display:none; font-family:'Lora',serif; font-style:italic; color:var(--amber-glow); font-size:1.1rem; position:relative; z-index:1; }
+
+  /* FOOTER */
+  footer { background:var(--ink); border-top:2px solid rgba(200,98,42,0.22); padding:2.5rem 3rem; display:flex; justify-content:space-between; align-items:center; gap:2rem; }
+  .footer-logo { font-family:'Alfa Slab One',serif; font-size:1.25rem; color:var(--cream); text-shadow:1px 1px 0 rgba(0,0,0,0.4); display:flex; align-items:center; gap:0.5rem; }
+  .footer-logo img { width:30px; height:30px; border-radius:50%; object-fit:cover; border:1.5px solid rgba(255,255,255,0.15); }
+  .footer-tagline { font-family:'Lora',serif; font-style:italic; font-size:0.78rem; color:var(--mist); margin-top:0.2rem; }
+  .footer-links { display:flex; gap:2rem; list-style:none; }
+  .footer-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); text-decoration:none; transition:color 0.2s; }
+  .footer-links a:hover { color:var(--amber-glow); }
+  .beehiiv-badge { font-family:'Barlow Condensed',sans-serif; font-size:0.66rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:rgba(138,172,181,0.38); border:1px solid rgba(138,172,181,0.16); padding:0.28rem 0.72rem; border-radius:2px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.65s ease,transform 0.65s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+</style>
+</head>
+<body>
+
+<div class="rain-container" id="rain"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img class="nav-raccoon" src="rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+    <span class="nav-logo-text">Raincheck</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#this-week">This Week</a></li>
+    <li><a href="#categories">Explore</a></li>
+    <li><a href="#advertise">Advertise</a></li>
+    <li><a href="#subscribe" class="nav-cta">Subscribe Free</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-image-bg">
+    <img src="raincheckbanner.png" alt="" />
+  </div>
+
+  <div class="hero-left">
+    <div class="hero-badge">☂ Seattle · Every Sunday · Free</div>
+    <h1 class="hero-title">RAIN<br>CHECK</h1>
+    <p class="hero-tagline">Where the drizzle becomes inspiration.</p>
+    <p class="hero-desc">The best things to eat, see, and do in Seattle — curated by locals who actually live here. No politics. No crime. Just the good stuff, every Sunday morning.</p>
+    <div class="hero-form">
+      <input type="email" id="hero-email" placeholder="your@email.com" />
+      <button onclick="subscribe('hero')">Get it free →</button>
+    </div>
+    <p class="success-msg" id="hero-success" style="margin-top:1rem;">You're in. See you Sunday ☂</p>
+    <div class="hero-proof">
+      <div><div class="proof-num">Free</div><div class="proof-label">Always</div></div>
+      <div><div class="proof-num">1×</div><div class="proof-label">Per week</div></div>
+      <div><div class="proof-num">60%+</div><div class="proof-label">Open rate</div></div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-right-inner">
+      <img src="raincheckbanner.png" alt="Raincheck Seattle — Where the drizzle becomes inspiration" />
+      <div class="hero-right-caption">Vol. 1 — Issue 001 — Seattle, WA</div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIPE -->
+<div class="stripe">
+  <span class="stripe-text">Seattle's Weekly Dispatch</span>
+  <div class="stripe-dot"></div>
+  <span class="stripe-text">Food · Music · Outdoors · Arts · Family</span>
+  <div class="stripe-dot"></div>
+  <span class="stripe-text">Every Sunday Morning</span>
+  <div class="stripe-dot"></div>
+  <span class="stripe-text">Always Free</span>
+  <div class="stripe-dot"></div>
+  <span class="stripe-text">Vol. 1 — Issue 001</span>
+</div>
+
+<!-- THIS WEEK -->
+<section class="this-week" id="this-week">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">This week's picks</div>
+      <h2 class="section-title">What's <em>on</em></h2>
+    </div>
+    <div class="issue-tag">Week of March 9, 2026</div>
+  </div>
+
+  <div class="cards-grid reveal">
+
+    <!-- HERO CARD (spans 2 cols) -->
+    <a class="card card--hero" href="#">
+      <div class="card-bar"></div>
+      <div class="card-img-wrap">
+        <div class="card-img-placeholder">🍜</div>
+      </div>
+      <div class="card-text">
+        <div class="card-cat">🍜 Food & Drink</div>
+        <h3 class="card-title">Tanaka Bros just opened their ramen counter in Capitol Hill — and the line is already wrapping the block</h3>
+        <p class="card-body">The duo behind Westlake's beloved izakaya finally opened their standalone ramen spot on Pine. Early reports say the tonkotsu is the real deal. Counter service only, cash preferred, opens at 11am. Go early or go hungry.</p>
+        <div class="card-loc">Capitol Hill · Tue–Sun</div>
+      </div>
+    </a>
+
+    <!-- CARD 2 -->
+    <a class="card" href="#">
+      <div class="card-bar"></div>
+      <div class="card-img-wrap">
+        <div class="card-img-placeholder">🎵</div>
+      </div>
+      <div class="card-text">
+        <div class="card-cat">🎵 Music</div>
+        <h3 class="card-title">Neumos hosts a rare all-local lineup this Friday</h3>
+        <p class="card-body">Five Seattle acts, $12 at the door. The kind of night you'll tell people about.</p>
+        <div class="card-loc">Fri Mar 13 · Capitol Hill</div>
+      </div>
+    </a>
+
+    <!-- CARD 3 -->
+    <a class="card" href="#">
+      <div class="card-bar"></div>
+      <div class="card-img-wrap">
+        <div class="card-img-placeholder">🌸</div>
+      </div>
+      <div class="card-text">
+        <div class="card-cat">🌸 Outdoors</div>
+        <h3 class="card-title">The cherry blossoms at UW are peaking early this year</h3>
+        <p class="card-body">Go this weekend. Seriously. They'll be gone by Tuesday.</p>
+        <div class="card-loc">This Weekend · UW Campus</div>
+      </div>
+    </a>
+
+    <!-- CARD 4 -->
+    <a class="card" href="#">
+      <div class="card-bar"></div>
+      <div class="card-img-wrap">
+        <div class="card-img-placeholder">🎨</div>
+      </div>
+      <div class="card-text">
+        <div class="card-cat">🎨 Arts & Culture</div>
+        <h3 class="card-title">SAM's new Pacific Northwest retrospective opens Saturday</h3>
+        <p class="card-body">Free admission opening weekend. Locals-only preview Friday night with RSVP.</p>
+        <div class="card-loc">Sat Mar 14 · Downtown</div>
+      </div>
+    </a>
+
+    <!-- CARD 5 -->
+    <a class="card" href="#">
+      <div class="card-bar"></div>
+      <div class="card-img-wrap">
+        <div class="card-img-placeholder">🏪</div>
+      </div>
+      <div class="card-text">
+        <div class="card-cat">🏪 New Opening</div>
+        <h3 class="card-title">Ballard's newest bookshop-café hybrid opens its doors</h3>
+        <p class="card-body">Good espresso, used books, no wi-fi by design. Exactly what we needed.</p>
+        <div class="card-loc">Now Open · Ballard</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<div class="section-divider"><span>Meet your editor</span></div>
+
+<!-- MASCOT -->
+<section class="mascot-band">
+  <img class="mascot-watermark" src="rockyracoon.png" alt="" aria-hidden="true" />
+  <img class="mascot-emoji reveal" src="rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+  <div class="reveal" style="transition-delay:0.15s">
+    <h2 class="mascot-title">Meet Rocky —<br><span>your guide to every corner of this city.</span></h2>
+    <p class="mascot-body">We eat the ramen before we write about it. We check whether the line's actually worth it. We go to the shows. We walk the trails. Raincheck isn't scraped from a press release — it's written by people who live here, eat here, and yeah, deal with the same rain you do.</p>
+    <div class="mascot-pills">
+      <span class="pill">☂ Seattle locals only</span>
+      <span class="pill">🍕 Actually tested</span>
+      <span class="pill">🎵 No PR fluff</span>
+      <span class="pill">🦝 Pizza mandatory</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><span>How it works</span></div>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works">
+  <div class="reveal">
+    <div class="section-eyebrow">The deal</div>
+    <h2 class="section-title">Simple as <em>that</em></h2>
+  </div>
+  <div class="steps">
+    <div class="step reveal" style="transition-delay:0.1s">
+      <div class="step-num">01</div>
+      <div class="step-icon">🔍</div>
+      <div class="step-title">We dig all week</div>
+      <p class="step-body">Restaurant openings, events, outdoor picks, cultural happenings — we scan every Seattle neighborhood so you don't have to doomscroll to find something worth doing.</p>
+    </div>
+    <div class="step reveal" style="transition-delay:0.2s">
+      <div class="step-num">02</div>
+      <div class="step-icon">☂</div>
+      <div class="step-title">You get it Sunday</div>
+      <p class="step-body">One email, Sunday morning. Eight to ten things worth your time this week, written by humans who actually live and eat and drink in this city.</p>
+    </div>
+    <div class="step reveal" style="transition-delay:0.3s">
+      <div class="step-num">03</div>
+      <div class="step-icon">🎉</div>
+      <div class="step-title">Go do things</div>
+      <p class="step-body">No paywalls. No fluff. No "content." Just a genuinely useful weekly guide to being a Seattleite who gets out and experiences the city — rain or shine.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+  <div class="reveal">
+    <div class="section-eyebrow">What we cover</div>
+    <h2 class="section-title">Eight <em>categories</em></h2>
+  </div>
+  <div class="cat-grid reveal">
+    <div class="cat-item"><span class="cat-icon">🍽️</span><div class="cat-name">Food & Drink</div><div class="cat-sub">New spots, pop-ups, happy hours</div></div>
+    <div class="cat-item"><span class="cat-icon">🎶</span><div class="cat-name">Music & Nightlife</div><div class="cat-sub">Shows, DJ sets, live events</div></div>
+    <div class="cat-item"><span class="cat-icon">🏔️</span><div class="cat-name">Outdoors</div><div class="cat-sub">Hikes, parks, waterfront</div></div>
+    <div class="cat-item"><span class="cat-icon">🎭</span><div class="cat-name">Arts & Culture</div><div class="cat-sub">Galleries, theater, film</div></div>
+    <div class="cat-item"><span class="cat-icon">👨‍👩‍👧</span><div class="cat-name">Family</div><div class="cat-sub">Kid-friendly, free events</div></div>
+    <div class="cat-item"><span class="cat-icon">🛍️</span><div class="cat-name">Shopping</div><div class="cat-sub">Markets, local shops, finds</div></div>
+    <div class="cat-item"><span class="cat-icon">⚽</span><div class="cat-name">Sports</div><div class="cat-sub">Sounders, Kraken, Mariners</div></div>
+    <div class="cat-item"><span class="cat-icon">🦝</span><div class="cat-name">Editor's Pick</div><div class="cat-sub">The raccoon's top 3</div></div>
+  </div>
+</section>
+
+<!-- ADVERTISE -->
+<section class="advertise" id="advertise">
+  <div class="reveal">
+    <div class="section-eyebrow">For local businesses</div>
+    <h2 class="advertise-headline">Reach Seattle when<br>they're <em>paying attention</em></h2>
+    <p class="advertise-body">Raincheck readers open every issue. That's not a guess — it's a 60%+ open rate in a world where 20% is industry average. Your ad sits next to content people actually wanted. No algorithm. No bidding war. Just direct access to engaged locals with spending power.</p>
+    <a href="mailto:ads@raincheckseattle.xyz" class="advertise-cta">Get the media kit →</a>
+  </div>
+  <div class="metrics-grid reveal" style="transition-delay:0.15s">
+    <div class="metric-box"><div class="metric-val">60%+</div><div class="metric-desc">Avg. open rate</div></div>
+    <div class="metric-box"><div class="metric-val">$10–12</div><div class="metric-desc">Revenue / subscriber</div></div>
+    <div class="metric-box"><div class="metric-val">Sunday</div><div class="metric-desc">Peak open window</div></div>
+    <div class="metric-box"><div class="metric-val">1 slot</div><div class="metric-desc">Ad per issue — no clutter</div></div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<section class="footer-cta" id="subscribe">
+  <img class="footer-cta-raccoon" src="rockyracoon.png" alt="Rocky the Raincheck Raccoon" />
+  <h2 class="footer-cta-title">See you Sunday.</h2>
+  <p class="footer-cta-sub">Free. Weekly. Seattle's best — straight to your inbox.</p>
+  <div class="footer-form">
+    <input type="email" id="footer-email" placeholder="your@email.com" />
+    <button onclick="subscribe('footer')">Subscribe free</button>
+  </div>
+  <p class="success-msg" id="footer-success" style="margin-top:1rem;">You're in. See you Sunday ☂</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo"><img src="rockyracoon.png" alt="Rocky the Raincheck Raccoon" /> Raincheck</div>
+    <div class="footer-tagline">Where the drizzle becomes inspiration.</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#">Archive</a></li>
+    <li><a href="#">Advertise</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Unsubscribe</a></li>
+  </ul>
+  <div class="beehiiv-badge">Powered by Beehiiv</div>
+</footer>
+
+<script>
+  // Rain
+  const rain = document.getElementById('rain');
+  for (let i = 0; i < 75; i++) {
+    const d = document.createElement('div');
+    d.className = 'raindrop';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.height = (Math.random() * 70 + 15) + 'px';
+    d.style.animationDuration = (Math.random() * 1.2 + 0.6) + 's';
+    d.style.animationDelay = (Math.random() * 4) + 's';
+    d.style.opacity = (Math.random() * 0.5 + 0.15).toFixed(2);
+    rain.appendChild(d);
+  }
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // ── BEEHIIV SUBSCRIBE ──
+  // Get your Publication ID from: Beehiiv Dashboard → Settings → Publication Details
+  // Looks like: pub_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  const BEEHIIV_PUB_ID = 'YOUR_PUBLICATION_ID_HERE';
+
+  async function subscribe(src) {
+    const input = document.getElementById(src + '-email');
+    const msg   = document.getElementById(src + '-success');
+    const btn   = input.nextElementSibling;
+    const email = input.value.trim();
+
+    if (!email || !email.includes('@')) {
+      input.style.borderColor = '#e05a5a';
+      setTimeout(() => input.style.borderColor = '', 1500);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    try {
+      const res = await fetch(
+        `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUB_ID}/subscriptions`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            reactivate_existing: true,
+            send_welcome_email: true,
+            utm_source: src === 'hero' ? 'raincheck_hero' : 'raincheck_footer',
+            utm_medium: 'organic',
+            utm_campaign: 'website_signup'
+          })
+        }
+      );
+      // Show success regardless — dont expose API errors to users
+      if (!res.ok) console.warn('Beehiiv:', await res.json());
+    } catch(e) {
+      console.warn('Subscribe error:', e);
+    }
+
+    input.parentElement.style.display = 'none';
+    msg.style.display = 'block';
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
