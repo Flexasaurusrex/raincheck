@@ -1,37 +1,22 @@
-export const config = { runtime: 'edge' };
+export const config = { maxDuration: 10 };
 
-export default async function handler(req) {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders() });
-  }
+const ENGINE_PASSWORD = process.env.ENGINE_PASSWORD || 'Rocky1';
 
-  if (req.method !== 'POST') {
-    return json({ error: 'Method not allowed' }, 405);
-  }
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  const { password } = await req.json();
-  const correct = process.env.ENGINE_PASSWORD || 'Rocky1';
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const { password } = req.body;
+  const correct = ENGINE_PASSWORD;
 
   if (password === correct) {
-    // Return a simple signed token: base64(timestamp + secret)
-    const token = btoa(`raincheck:${Date.now()}:${correct}`);
-    return json({ ok: true, token });
+    const token = Buffer.from(`raincheck:${Date.now()}:${correct}`).toString('base64');
+    return res.status(200).json({ ok: true, token });
   }
 
-  return json({ ok: false, error: 'Wrong password' }, 401);
-}
-
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders() }
-  });
-}
-
-function corsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  };
+  return res.status(401).json({ ok: false, error: 'Wrong password' });
 }
