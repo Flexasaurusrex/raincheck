@@ -2,7 +2,7 @@ export const config = { maxDuration: 30 };
 
 const GITHUB_TOKEN    = process.env.GITHUB_TOKEN;
 const GITHUB_REPO     = process.env.GITHUB_REPO || 'flexasaurusrex/raincheck';
-const ENGINE_PASSWORD = process.env.ENGINE_PASSWORD || 'Rocky1';
+const ENGINE_PASSWORD = process.env.ENGINE_PASSWORD;
 const FILE_PATH       = 'public/stories.json';
 const BRANCH          = 'main';
 

@@ -5,7 +5,7 @@ import { put } from '@vercel/blob';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const OPENAI_API_KEY    = process.env.OPENAI_API_KEY;
-const ENGINE_PASSWORD   = process.env.ENGINE_PASSWORD || 'Rocky1';
+const ENGINE_PASSWORD   = process.env.ENGINE_PASSWORD;
 
 function isValidToken(token) {
   try {

@@ -1,6 +1,6 @@
 export const config = { maxDuration: 10 };
 
-const ENGINE_PASSWORD = process.env.ENGINE_PASSWORD || 'Rocky1';
+const ENGINE_PASSWORD = process.env.ENGINE_PASSWORD;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
