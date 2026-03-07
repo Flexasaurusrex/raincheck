@@ -1,6 +1,8 @@
 // Regular serverless function - 60s timeout
 export const config = { maxDuration: 60 };
 
+import { put } from '@vercel/blob';
+
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const OPENAI_API_KEY    = process.env.OPENAI_API_KEY;
 const ENGINE_PASSWORD   = process.env.ENGINE_PASSWORD || 'Rocky1';
@@ -39,7 +41,6 @@ export default async function handler(req, res) {
 async function findSeattleStories(res) {
   const today = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
 
-  // Single call with web search tool — Claude searches and writes in one shot
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -81,7 +82,6 @@ Categories: 🍜 Food & Drink, 🎵 Music, 🌸 Outdoors, 🎨 Arts & Culture, �
 
   const data = await response.json();
 
-  // Extract text blocks only
   let text = '';
   for (const block of (data.content || [])) {
     if (block.type === 'text') text += block.text;
@@ -134,14 +134,26 @@ Return ONLY this JSON:
 async function generateImage(res, imagePromptSubject) {
   const prompt = `Woodblock linocut print illustration, wet ink texture, deep teal and warm amber palette, Seattle rainy atmosphere, gritty vintage editorial style, high contrast, square crop — ${imagePromptSubject}`;
 
-  const response = await fetch('https://api.openai.com/v1/images/generations', {
+  // Generate from DALL-E
+  const openaiRes = await fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_API_KEY}` },
     body: JSON.stringify({ model: 'dall-e-3', prompt, n: 1, size: '1024x1024', response_format: 'url' })
   });
 
-  const data = await response.json();
+  const data = await openaiRes.json();
   if (data.error) throw new Error(`OpenAI error: ${data.error.message} (code: ${data.error.code})`);
-  if (!data.data || !data.data[0]) throw new Error(`Unexpected OpenAI response: ${JSON.stringify(data)}`);
-  return res.status(200).json({ url: data.data[0].url });
+  if (!data.data?.[0]?.url) throw new Error(`Unexpected OpenAI response: ${JSON.stringify(data)}`);
+
+  // Fetch image and upload to Vercel Blob for permanent storage
+  const imageRes = await fetch(data.data[0].url);
+  const imageBuffer = await imageRes.arrayBuffer();
+  const filename = `images/${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
+
+  const blob = await put(filename, imageBuffer, {
+    access: 'public',
+    contentType: 'image/png'
+  });
+
+  return res.status(200).json({ url: blob.url });
 }
