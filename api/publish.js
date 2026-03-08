@@ -1,10 +1,10 @@
-export const config = { maxDuration: 30 };
+export const config = { maxDuration: 60 };
 
 const GITHUB_TOKEN    = process.env.GITHUB_TOKEN;
 const GITHUB_REPO     = process.env.GITHUB_REPO || 'flexasaurusrex/raincheck';
 const ENGINE_PASSWORD = process.env.ENGINE_PASSWORD;
-const FILE_PATH       = 'public/stories.json';
 const BRANCH          = 'main';
+const SITE_URL        = 'https://raincheck.news';
 
 function isValidToken(token) {
   try {
@@ -12,6 +12,18 @@ function isValidToken(token) {
     const [prefix, , password] = decoded.split(':');
     return prefix === 'raincheck' && password === ENGINE_PASSWORD;
   } catch { return false; }
+}
+
+async function gh(path, options = {}) {
+  return fetch(`https://api.github.com/repos/${GITHUB_REPO}${path}`, {
+    ...options,
+    headers: {
+      'Authorization': `Bearer ${GITHUB_TOKEN}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      ...(options.headers || {})
+    }
+  });
 }
 
 export default async function handler(req, res) {
@@ -28,50 +40,91 @@ export default async function handler(req, res) {
   if (!stories || !stories.length)    return res.status(400).json({ error: 'No stories provided' });
 
   try {
-    const content = JSON.stringify({ issue, week_of, stories }, null, 2);
-    const base64  = Buffer.from(content).toString('base64');
+    // Get current branch tip
+    const branchRes = await gh(`/git/refs/heads/${BRANCH}`);
+    if (!branchRes.ok) throw new Error('Could not get branch ref');
+    const { object: { sha: branchSha } } = await branchRes.json();
 
-    // Get current file SHA (required for updates)
-    const getRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${BRANCH}`, {
-      headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28'
+    // Get tree SHA of current commit
+    const commitRes = await gh(`/git/commits/${branchSha}`);
+    if (!commitRes.ok) throw new Error('Could not get commit');
+    const { tree: { sha: treeSha } } = await commitRes.json();
+
+    // Download each Vercel Blob image and upload to GitHub, rewrite URL to raincheck.news
+    const treeItems = [];
+
+    const processedStories = await Promise.all(stories.map(async (story) => {
+      if (!story.image || !story.image.includes('vercel-storage.com')) return story;
+      try {
+        const imgRes = await fetch(story.image);
+        if (!imgRes.ok) return story;
+        const imgBuffer = await imgRes.arrayBuffer();
+        const base64 = Buffer.from(imgBuffer).toString('base64');
+
+        // Keep original filename from blob URL
+        const rawName = story.image.split('/').pop().split('?')[0];
+        const repoPath = `public/images/${rawName}`;
+
+        const blobRes = await gh('/git/blobs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: base64, encoding: 'base64' })
+        });
+        if (!blobRes.ok) return story;
+        const { sha: blobSha } = await blobRes.json();
+
+        treeItems.push({ path: repoPath, mode: '100644', type: 'blob', sha: blobSha });
+        return { ...story, image: `${SITE_URL}/images/${rawName}` };
+      } catch (e) {
+        console.error('Image transfer failed:', e.message);
+        return story;
       }
+    }));
+
+    // Add stories.json (with rewritten image URLs) to the tree
+    const storiesContent = JSON.stringify({ issue, week_of, stories: processedStories }, null, 2);
+    const storiesBlobRes = await gh('/git/blobs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: Buffer.from(storiesContent).toString('base64'), encoding: 'base64' })
     });
+    if (!storiesBlobRes.ok) throw new Error('Could not create stories blob');
+    const { sha: storiesBlobSha } = await storiesBlobRes.json();
+    treeItems.push({ path: 'public/stories.json', mode: '100644', type: 'blob', sha: storiesBlobSha });
 
-    let sha = null;
-    if (getRes.ok) {
-      const existing = await getRes.json();
-      sha = existing.sha;
-    }
+    // Create new tree on top of existing
+    const newTreeRes = await gh('/git/trees', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base_tree: treeSha, tree: treeItems })
+    });
+    if (!newTreeRes.ok) throw new Error('Could not create tree');
+    const { sha: newTreeSha } = await newTreeRes.json();
 
-    // Commit the new stories.json
-    const putRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github+json',
-        'Content-Type': 'application/json',
-        'X-GitHub-Api-Version': '2022-11-28'
-      },
+    // Create commit
+    const newCommitRes = await gh('/git/commits', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: `📰 Issue #${issue} — ${week_of}`,
-        content: base64,
-        branch:  BRANCH,
-        ...(sha ? { sha } : {})
+        tree: newTreeSha,
+        parents: [branchSha]
       })
     });
+    if (!newCommitRes.ok) throw new Error('Could not create commit');
+    const { sha: newCommitSha, html_url } = await newCommitRes.json();
 
-    if (!putRes.ok) {
-      const err = await putRes.json();
-      throw new Error(`GitHub API error: ${err.message}`);
-    }
+    // Advance branch ref
+    const updateRefRes = await gh(`/git/refs/heads/${BRANCH}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sha: newCommitSha })
+    });
+    if (!updateRefRes.ok) throw new Error('Could not update branch ref');
 
-    const result = await putRes.json();
     return res.status(200).json({
       ok: true,
-      commit: result.commit?.html_url,
+      commit: html_url,
       message: `Issue #${issue} published — site will update in ~15 seconds`
     });
 
