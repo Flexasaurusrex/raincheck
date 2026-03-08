@@ -409,7 +409,6 @@
         const imgContent = story.image
           ? `<img src="${story.image}" alt="${story.headline}" />`
           : `<div class="card-img-placeholder">${story.image_placeholder || '📰'}</div>`;
-        const hasLinks = story.link || story.tickets_link || story.maps_link;
         card.innerHTML = `
           <div class="card-bar"></div>
           <div class="card-img-wrap">${imgContent}</div>
@@ -418,7 +417,7 @@
             <h3 class="card-title">${story.headline}</h3>
             <p class="card-body">${story.body}</p>
             <div class="card-loc">${story.location}</div>
-            ${hasLinks ? '<div class="card-explore">More info →</div>' : ''}
+            <div class="card-explore">More info →</div>
           </div>`;
         card.addEventListener('click', () => openModal(story));
         grid.appendChild(card);
@@ -457,6 +456,13 @@
       const a = document.createElement('a');
       a.href = story.tickets_link; a.target = '_blank'; a.rel = 'noopener';
       a.className = 'modal-link modal-link--primary'; a.textContent = '🎟 Get tickets';
+      linksEl.appendChild(a);
+    }
+    if (!story.link && !story.maps_link && !story.tickets_link) {
+      const a = document.createElement('a');
+      a.href = 'https://www.google.com/search?q=' + encodeURIComponent(story.headline + ' Seattle');
+      a.target = '_blank'; a.rel = 'noopener';
+      a.className = 'modal-link modal-link--primary'; a.textContent = 'Search online →';
       linksEl.appendChild(a);
     }
     document.getElementById('modal-overlay').classList.add('open');
