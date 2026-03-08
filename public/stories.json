@@ -1,68 +1,86 @@
 {
-  "issue": "001",
-  "week_of": "March 7, 2026",
+  "issue": "002",
+  "week_of": "March 8, 2026",
   "stories": [
     {
       "id": "story-001",
       "hero": true,
-      "category": "🎨 Arts & Culture",
-      "headline": "Emerald City Comic Con Takes Over Seattle Convention Center",
-      "body": "Emerald City Comic Con returns to the Seattle Convention Center from Thursday, March 5 to Sunday, March 8, featuring notable screen legends and comic royalty. This year's guests of honor include comic book legend Chris Claremont, Doctor Who's David Tennant, and Star Wars' Hayden Christensen.",
-      "location": "Downtown · March 5-8",
-      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885736458-w3ilvswa40k-xJTIFn7gG1uxnRgtb8GEgatrBrR2st.png",
-      "image_placeholder": "📰",
-      "link": "https://www.emeraldcitycomiccon.com/",
-      "tickets_link": "https://www.emeraldcitycomiccon.com/attend/tickets/"
+      "category": "🏪 New Opening",
+      "headline": "Hello Baiana Brings Brazilian Street Food to Pike Place Market",
+      "body": "Former Chopped and Beat Bobby Flay champion Emme Ribeiro Collins opens her Afro-Brazilian restaurant at an eight-seat counter inside Pike Place Market. The menu features dishes like moqueca, alcarajé, and rabada that often sell out at her pop-ups.",
+      "location": "Pike Place Market · late February/early March",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772960577170-l0trim6lp2-HfhDulyxclLq2IHMWaCR8W7MFYFjql.png",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-002",
       "hero": false,
-      "category": "⚽ Sports",
-      "headline": "Mariners Home Opener Against Cleveland Guardians",
-      "body": "The Mariners will face off against the Cleveland Guardians for the home opener on Thursday, March 26, followed by three additional back-to-back games. This marks the 50th season in franchise history and their 27th full season at T-Mobile Park.",
-      "location": "SoDo · March 26",
-      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885735235-k5g552mcxp-Qry3qlalnHPYorTx2QEHZgYBcKnDv9.png",
-      "image_placeholder": "📰",
-      "link": "https://www.mlb.com/mariners/schedule",
-      "tickets_link": "https://www.mlb.com/mariners/tickets",
-      "maps_link": "https://maps.google.com/?q=T-Mobile+Park+Seattle"
+      "category": "🎭 Theater",
+      "headline": "The Notebook Musical Opens Broadway at the Paramount",
+      "body": "The beloved romance jumps from screen to stage in this Broadway production featuring music by Ingrid Michaelson and direction by Tony nominee Michael Greif. It's been sixteen years since the movie captivated audiences.",
+      "location": "Downtown · March at The Paramount Theatre",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772960574615-ji4hxcbeeva-Kpa1qSNkibvzCKtQeiom7N30XZaQYF.png",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-003",
       "hero": false,
-      "category": "🍜 Food & Drink",
-      "headline": "Kells Irish Festival Brings 12 Days of Celtic Celebration",
-      "body": "Patrick's Irish Festival has remained the beating heart of Seattle's St. Patrick's Day celebrations, hosted at the historic Butterworth Building near Pike Place. This year features daily live performances from folk ballads to Celtic rock, plus rugby watch parties and parade festivities.",
-      "location": "Pike Place Market · March 6-17",
-      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885731929-m1w5rpmieji-IqJrfFRWplJPLILvYh1tcY1flZLwoq.png",
-      "image_placeholder": "📰",
-      "link": "https://www.kellsirish.com/seattle/",
-      "maps_link": "https://maps.google.com/?q=Kells+Irish+Restaurant+Seattle"
+      "category": "🎭 Theater",
+      "headline": "The Notebook Musical Opens Hearts at Paramount",
+      "body": "Ryan Gosling and Rachel McAdams' beloved romance gets the Broadway treatment with songs by Ingrid Michaelson. The touring production brings Noah and Allie's love story to life through song and dance at the historic Paramount Theatre.",
+      "location": "Downtown · March dates TBA",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772961050772-d2cjgkllj3-KPhpLsvyYjqsIuukZfY7YJLVthdMjK.png",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-004",
       "hero": false,
-      "category": "🍜 Food & Drink",
-      "headline": "Taste Washington Returns with 200+ Wineries and Restaurants",
-      "body": "The annual full-blown wine convention returns in a flurry of tasting pours and chef-made bites, featuring unlimited tastings from over 200 wineries and 75 restaurants. Tickets include live cooking demos, hands-on crafts, and bingo games on the side.",
-      "location": "SoDo · March 21-22",
-      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885731263-z4lsfi7tr5g-R5LvcE0LfomLM93zUNWszA2fBBhjNL.png",
-      "image_placeholder": "📰",
-      "link": "https://tastewashington.org/",
-      "tickets_link": "https://tastewashington.org/attend/"
+      "category": "🎨 Arts & Culture",
+      "headline": "Balkan Night Northwest Brings Southeastern European Fire",
+      "body": "The region's biggest Balkan music and dance celebration returns March 14 with acclaimed Albanian artists Merita Halili and Raif Hyseni. Three stages pack St. Demetrios Greek Orthodox Church with nonstop traditional music and dancing.",
+      "location": "Montlake · March 14",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772961049304-5ud7u2a54lq-asPv3QObvl61rLDGcesdoXmQFo1SrQ.png",
+      "image_placeholder": "📰"
     },
     {
       "id": "story-005",
       "hero": false,
       "category": "🎵 Music",
-      "headline": "Balkan Night Northwest Celebrates Regional Culture",
-      "body": "Sound, movement, and cultural pride define this year's Balkan Night Northwest, the region's biggest Balkan music and dance event. This annual celebration packs out three stages with nonstop tunes and steps from Albania, Bulgaria, Serbia, and beyond.",
-      "location": "Various Locations · March 14",
-      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772885739366-y86ikvzfbfi-aXCuiaoBLtJh9L1ESjG9VcpjiAlzgW.png",
-      "image_placeholder": "📰",
-      "link": "https://www.balkannightnw.com/",
-      "tickets_link": "https://www.strangertickets.com/events/180135975/balkan-night-northwest-2026",
-      "maps_link": "https://maps.google.com/?q=St+Demetrios+Greek+Orthodox+Church+Seattle"
+      "headline": "Hot Java Cool Jazz Features Local High School Talent",
+      "body": "Five local high school jazz bands showcase their skills at The Paramount Theatre in this annual celebration of young musical talent. The competition highlights the impressive depth of Seattle's music education programs.",
+      "location": "Downtown · March dates TBA",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772961049443-mwl3q6cis7b-J3gSMrxs5s9ykru6Z5DoswloV1SnAv.png",
+      "image_placeholder": "📰"
+    },
+    {
+      "id": "story-006",
+      "hero": false,
+      "category": "👨‍👩‍👧 Family",
+      "headline": "Northwest Record Show Spins Into Seattle Center",
+      "body": "Collectors and music lovers browse 50 tables of vinyl records, CDs, and music memorabilia on March 8. Early admission starts at 8 AM for serious diggers, with regular admission running until 5 PM at the Armory.",
+      "location": "Seattle Center · March 8, 10 AM-5 PM",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772961048340-ugsxawzsw6g-dYNYUhgPHJTksSTH2xgAwNwhYZqI4x.png",
+      "image_placeholder": "📰"
+    },
+    {
+      "id": "story-007",
+      "hero": false,
+      "category": "🏪 New Opening",
+      "headline": "Cafe Lolo Takes Over Iconic Capitol Hill Corner",
+      "body": "The farmers market pasta makers are opening their brick-and-mortar restaurant 'very soon' in the former Cook Weaver space at the bottom of the Loveless building. Expect house-milled grains and seasonal local produce.",
+      "location": "Capitol Hill · Opening very soon",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772961050891-mllwjxnjk-HiuHMiTn9b6A9zsNNWvTWtkHRYlHiI.png",
+      "image_placeholder": "📰"
+    },
+    {
+      "id": "story-008",
+      "hero": false,
+      "category": "⚽ Sports",
+      "headline": "US Women's Soccer Takes On Japan at Lumen Field",
+      "body": "The USWNT faces Japan in an international friendly on March 11, presented by Allstate. The match promises to showcase top-level women's soccer as both teams prepare for upcoming major tournaments.",
+      "location": "SoDo · March 11, 7:00 PM",
+      "image": "https://870b8iqy14lryib6.public.blob.vercel-storage.com/images/1772961052707-hj2w2r2qova-QVN6e01aeoYBKHwJWLfYWftRqD6zND.png",
+      "image_placeholder": "📰"
     }
   ]
 }
