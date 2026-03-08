@@ -56,10 +56,13 @@ async function findSeattleStories(res, count = 5) {
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
       system: `You are the editorial voice of Raincheck, Seattle's weekly local newsletter. Today is ${today}.
 Write warm, witty, hyperlocal content based on REAL current Seattle events you find.
+CRITICAL: Before writing any date into a story, verify it with a second search. Never guess or infer dates — only write dates you have confirmed from a source. If you cannot confirm an exact date, write "dates TBA" rather than guessing.
 After searching, return ONLY a valid JSON array — no markdown, no backticks, no explanation.`,
       messages: [{
         role: 'user',
         content: `Search for real things happening in Seattle this week and write ${count} newsletter stories.
+
+IMPORTANT: For every event date you include, you must have found it explicitly in a search result. Do not assume or approximate dates.
 
 Return ONLY this JSON array:
 [
