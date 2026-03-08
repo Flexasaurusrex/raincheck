@@ -26,6 +26,44 @@ async function gh(path, options = {}) {
   });
 }
 
+function buildArchiveBlock(issue, week_of, stories) {
+  const cards = stories.map(story => {
+    const heroClass = story.hero ? ' story-card--hero' : '';
+    const imgHtml = story.image
+      ? `<img src="${story.image}" alt="${(story.headline || '').replace(/"/g, '&quot;')}" />`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;">${story.image_placeholder || '📰'}</div>`;
+    const linksHtml = [
+      story.link         ? `<a class="card-link card-link--primary" href="${story.link}" target="_blank" rel="noopener">More info →</a>` : '',
+      story.tickets_link ? `<a class="card-link card-link--secondary" href="${story.tickets_link}" target="_blank" rel="noopener">🎟 Get tickets</a>` : '',
+      story.maps_link    ? `<a class="card-link card-link--secondary" href="${story.maps_link}" target="_blank" rel="noopener">📍 Directions</a>` : '',
+    ].filter(Boolean).join('\n            ');
+
+    return `      <div class="story-card${heroClass}">
+        <div class="card-bar"></div>
+        <div class="card-img">${imgHtml}</div>
+        <div class="card-body">
+          <div class="card-cat">${story.category || ''}</div>
+          <h3 class="card-title">${story.headline || ''}</h3>
+          <p class="card-text">${story.body || ''}</p>
+          <div class="card-loc">${story.location || ''}</div>
+          ${linksHtml ? `<div class="card-links">\n            ${linksHtml}\n          </div>` : ''}
+        </div>
+      </div>`;
+  }).join('\n\n');
+
+  return `  <!-- ISSUE ${issue} -->
+  <div class="issue-block reveal">
+    <div class="issue-header">
+      <div class="issue-num">Issue ${issue}</div>
+      <div class="issue-date">Vol. 1</div>
+      <div class="issue-tag">Week of ${week_of}</div>
+    </div>
+    <div class="stories-grid">
+${cards}
+    </div>
+  </div>`;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -91,6 +129,31 @@ export default async function handler(req, res) {
     if (!storiesBlobRes.ok) throw new Error('Could not create stories blob');
     const { sha: storiesBlobSha } = await storiesBlobRes.json();
     treeItems.push({ path: 'public/stories.json', mode: '100644', type: 'blob', sha: storiesBlobSha });
+
+    // Update archive.html with new issue block
+    try {
+      const archiveRes = await gh('/contents/public/archive.html');
+      if (archiveRes.ok) {
+        const archiveData = await archiveRes.json();
+        const currentHtml = Buffer.from(archiveData.content, 'base64').toString('utf8');
+        const issueBlock = buildArchiveBlock(issue, week_of, processedStories);
+        const marker = '  <!-- Future issues will appear here -->';
+        if (currentHtml.includes(marker) && !currentHtml.includes(`Issue ${issue}<`)) {
+          const updatedHtml = currentHtml.replace(marker, `${issueBlock}\n\n${marker}`);
+          const archiveBlobRes = await gh('/git/blobs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: Buffer.from(updatedHtml).toString('base64'), encoding: 'base64' })
+          });
+          if (archiveBlobRes.ok) {
+            const { sha: archiveBlobSha } = await archiveBlobRes.json();
+            treeItems.push({ path: 'public/archive.html', mode: '100644', type: 'blob', sha: archiveBlobSha });
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Archive update failed (non-fatal):', e.message);
+    }
 
     // Create new tree on top of existing
     const newTreeRes = await gh('/git/trees', {
