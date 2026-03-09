@@ -6,6 +6,8 @@ import { put } from '@vercel/blob';
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const OPENAI_API_KEY    = process.env.OPENAI_API_KEY;
 const ENGINE_PASSWORD   = process.env.ENGINE_PASSWORD;
+const GOOGLE_CSE_KEY    = process.env.GOOGLE_CSE_KEY;
+const GOOGLE_CSE_CX     = process.env.GOOGLE_CSE_CX;
 
 function isValidToken(token) {
   try {
@@ -96,7 +98,29 @@ Categories: 🍜 Food & Drink, 🎵 Music, 🌸 Outdoors, 🎨 Arts & Culture, �
   const match = text.match(/\[[\s\S]*\]/);
   if (!match) throw new Error('Could not parse stories from response');
 
-  return res.status(200).json({ stories: JSON.parse(match[0]) });
+  const stories = JSON.parse(match[0]);
+
+  // Fill any missing image_url via Google Image Search (parallel)
+  const withImages = await Promise.all(stories.map(async (story) => {
+    if (story.image_url) return story;
+    const q = `${story.headline} Seattle`;
+    const img = await searchGoogleImage(q);
+    return { ...story, image_url: img || null };
+  }));
+
+  return res.status(200).json({ stories: withImages });
+}
+
+async function searchGoogleImage(query) {
+  if (!GOOGLE_CSE_KEY || !GOOGLE_CSE_CX) return null;
+  try {
+    const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_CSE_KEY}&cx=${GOOGLE_CSE_CX}&q=${encodeURIComponent(query)}&searchType=image&num=1&imgSize=large&imgType=photo&safe=active`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.items?.[0]?.link || null;
+  } catch (e) {
+    return null;
+  }
 }
 
 async function generateStory(res, { topic, category, neighborhood, context }) {
