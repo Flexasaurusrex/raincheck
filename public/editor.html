@@ -550,8 +550,12 @@
       } catch(e) {}
     }
 
-    // 3. Placeholder
-    setThumbFallback(cardId, '📰');
+    // 3. Auto-generate AI image as final fallback
+    if (aiSubject) {
+      generateImage(cardId, aiSubject);
+    } else {
+      setThumbFallback(cardId, '📰');
+    }
   }
 
   function testImageUrl(url) {

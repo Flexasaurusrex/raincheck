@@ -56,16 +56,13 @@ async function findSeattleStories(res, count = 5) {
       max_tokens: 3000,
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
       system: `You are the editorial voice of Raincheck, Seattle's weekly local newsletter. Today is ${today}.
-Write warm, witty, hyperlocal content based on REAL current Seattle events you find.
-CRITICAL: Before writing any date into a story, verify it with a second search. Never guess or infer dates — only write dates you have confirmed from a source. If you cannot confirm an exact date, write "dates TBA" rather than guessing.
-After searching, return ONLY a valid JSON array — no markdown, no backticks, no explanation.`,
+Write warm, witty, hyperlocal content based on REAL current Seattle events.
+CRITICAL: Only write dates you explicitly found in search results — never guess. Use "dates TBA" if unconfirmed.
+For image_url: find a direct .jpg/.png/.webp URL from the event page, venue site, or news article. Look at og:image tags, press photos, or event banners. Every story needs a real image URL.
+Return ONLY a valid JSON array — no markdown, no backticks, no explanation.`,
       messages: [{
         role: 'user',
-        content: `Search for real things happening in Seattle this week and write ${count} newsletter stories.
-
-IMPORTANT: For every event date you include, you must have found it explicitly in a search result. Do not assume or approximate dates.
-
-For each story, also find a real image URL from the web — a photo from the event page, venue website, or news article. Look for high-quality promo images, event banners, or editorial photos. This is important: actually search for and find a direct image URL for each story.
+        content: `Do ONE broad search for "Seattle events this week ${today}" then write ${count} stories covering different categories. For each story find a direct image URL from its source page.
 
 Return ONLY this JSON array:
 [
@@ -74,12 +71,12 @@ Return ONLY this JSON array:
     "headline": "punchy headline max 12 words",
     "body": "2-3 sentences with specific real details.",
     "location": "Neighborhood · timing",
-    "image_url": "direct URL to a real photo from the event/venue — null if none found",
+    "image_url": "direct URL ending in .jpg/.png/.webp from the event/venue — null only if truly none exists",
     "image_prompt_subject": "specific visual for woodblock linocut illustration",
     "image_placeholder": "🍜",
-    "link": "real URL to official website, event page, or best source — null if none found",
+    "link": "real URL to official source — null if none",
     "maps_link": "https://maps.google.com/?q=VENUE+NAME+SEATTLE — null if no specific venue",
-    "tickets_link": "URL to ticket purchase page — null if no tickets needed"
+    "tickets_link": "URL to ticket purchase — null if free/no tickets"
   }
 ]
 
