@@ -107,6 +107,8 @@
   .btn-discard:hover{background:rgba(192,57,43,0.25)}
   .btn-upload{background:rgba(138,172,181,0.1);border-color:rgba(138,172,181,0.3);color:var(--mist)}
   .btn-upload:hover{background:rgba(138,172,181,0.25);color:var(--cream)}
+  .btn-ai{background:rgba(200,98,42,0.12);border-color:rgba(200,98,42,0.35);color:var(--amber-glow)}
+  .btn-ai:hover{background:rgba(200,98,42,0.25)}
   .story-content{padding:1rem 1.1rem 0.8rem;flex:1;display:flex;flex-direction:column}
   .story-headline{font-family:'Alfa Slab One',serif;font-size:1rem;color:var(--cream);line-height:1.25;margin-bottom:0.6rem}
   .story-body{font-family:'Lora',serif;font-size:0.82rem;line-height:1.7;color:var(--mist);flex:1}
@@ -465,7 +467,7 @@
       showQueue();
       for (const story of data.stories) {
         const id = addCard(story);
-        generateImage(id, story.image_prompt_subject);
+        fetchOgImage(id, story.link, story.image_prompt_subject);
       }
       showToast(`Found ${data.stories.length} Seattle stories ✓`, 'success');
     } catch(e) { hideStatus(); showToast('Error: ' + e.message); }
@@ -490,7 +492,7 @@
       if (data.error) throw new Error(data.error);
       hideStatus(); showQueue();
       const id = addCard({ ...data.story, category });
-      generateImage(id, data.story.image_prompt_subject);
+      fetchOgImage(id, data.story.link, data.story.image_prompt_subject);
     } catch(e) { hideStatus(); showToast('Error: ' + e.message); }
   }
 
@@ -503,14 +505,15 @@
     el.id = id;
     el.innerHTML = `
       <div class="story-thumb" id="thumb-${id}">
-        <div class="thumb-loading"><div class="thumb-spinner"></div><span>Generating art...</span></div>
+        <div class="thumb-loading"><div class="thumb-spinner"></div><span>Fetching image...</span></div>
       </div>
       <div class="story-card-header">
         <span class="story-cat-badge">${story.category}</span>
         <div class="story-card-actions">
           <button class="btn-action btn-approve" onclick="approve('${id}')">✓ Approve</button>
           <button class="btn-action btn-edit"    onclick="edit('${id}')">Edit</button>
-          <button class="btn-action btn-upload"  onclick="uploadPhoto('${id}')" title="Swap image">📷</button>
+          <button class="btn-action btn-ai"      onclick="generateImage('${id}', getPrompt('${id}'))" title="Generate AI image">🎨 AI</button>
+          <button class="btn-action btn-upload"  onclick="uploadPhoto('${id}')" title="Upload photo">📷</button>
           <button class="btn-action btn-discard" onclick="discard('${id}')">✕</button>
         </div>
       </div>
@@ -526,9 +529,35 @@
     return id;
   }
 
-  // ── GENERATE IMAGE ──
+  // ── FETCH OG IMAGE (default) ──
+  async function fetchOgImage(cardId, sourceUrl, aiSubject) {
+    const thumb = document.getElementById('thumb-' + cardId);
+    // store the AI prompt on the card element for later
+    if (aiSubject) document.getElementById(cardId).dataset.aiPrompt = aiSubject;
+    if (!sourceUrl) { setThumbFallback(cardId, '📰'); return; }
+    try {
+      const res  = await fetch(API, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'fetch_og_image', sourceUrl, token: getToken() })
+      });
+      const data = await res.json();
+      if (data.url) {
+        thumb.innerHTML = `<img src="${data.url}" alt="thumbnail" style="width:100%;height:100%;object-fit:cover;" />`;
+      } else {
+        setThumbFallback(cardId, '📰');
+      }
+    } catch(e) { setThumbFallback(cardId, '📰'); }
+  }
+
+  function getPrompt(cardId) {
+    return document.getElementById(cardId)?.dataset.aiPrompt || '';
+  }
+
+  // ── GENERATE IMAGE (AI, on demand) ──
   async function generateImage(cardId, subject) {
-    if (!subject) { setThumbFallback(cardId, '📰'); return; }
+    if (!subject) { showToast('No AI prompt available for this story'); return; }
+    const thumb = document.getElementById('thumb-' + cardId);
+    thumb.innerHTML = `<div class="thumb-loading"><div class="thumb-spinner"></div><span>Generating AI art...</span></div>`;
     try {
       const res  = await fetch(API, {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -536,7 +565,7 @@
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      document.getElementById('thumb-' + cardId).innerHTML = `<img src="${data.url}" alt="thumbnail" />`;
+      thumb.innerHTML = `<img src="${data.url}" alt="thumbnail" />`;
     } catch(e) { setThumbFallback(cardId, '🖼'); }
   }
   function setThumbFallback(id, emoji) {

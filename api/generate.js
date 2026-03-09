@@ -31,6 +31,7 @@ export default async function handler(req, res) {
     if (action === 'find_stories')   return await findSeattleStories(res, req.body.count || 5);
     if (action === 'generate_story') return await generateStory(res, { topic, category, neighborhood, context });
     if (action === 'generate_image') return await generateImage(res, imagePrompt);
+    if (action === 'fetch_og_image') return await fetchOgImage(res, req.body.sourceUrl);
     if (action === 'upload_image')   return await uploadUserImage(res, req.body.imageData, req.body.filename);
     return res.status(400).json({ error: 'Unknown action' });
   } catch (e) {
@@ -160,6 +161,23 @@ async function generateImage(res, imagePromptSubject) {
   });
 
   return res.status(200).json({ url: blob.url });
+}
+
+async function fetchOgImage(res, url) {
+  if (!url) return res.status(200).json({ url: null });
+  try {
+    const r = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Raincheck/1.0; +https://raincheck.news)' },
+      signal: AbortSignal.timeout(8000)
+    });
+    if (!r.ok) return res.status(200).json({ url: null });
+    const html = await r.text();
+    const match = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+                || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+    return res.status(200).json({ url: match ? match[1] : null });
+  } catch (e) {
+    return res.status(200).json({ url: null });
+  }
 }
 
 async function uploadUserImage(res, base64Data, filename) {
