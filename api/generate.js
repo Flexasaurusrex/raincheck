@@ -65,6 +65,8 @@ After searching, return ONLY a valid JSON array — no markdown, no backticks, n
 
 IMPORTANT: For every event date you include, you must have found it explicitly in a search result. Do not assume or approximate dates.
 
+For each story, also find a real image URL from the web — a photo from the event page, venue website, or news article. Look for high-quality promo images, event banners, or editorial photos. This is important: actually search for and find a direct image URL for each story.
+
 Return ONLY this JSON array:
 [
   {
@@ -72,6 +74,7 @@ Return ONLY this JSON array:
     "headline": "punchy headline max 12 words",
     "body": "2-3 sentences with specific real details.",
     "location": "Neighborhood · timing",
+    "image_url": "direct URL to a real photo from the event/venue — null if none found",
     "image_prompt_subject": "specific visual for woodblock linocut illustration",
     "image_placeholder": "🍜",
     "link": "real URL to official website, event page, or best source — null if none found",

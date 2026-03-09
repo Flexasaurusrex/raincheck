@@ -467,7 +467,7 @@
       showQueue();
       for (const story of data.stories) {
         const id = addCard(story);
-        fetchOgImage(id, story.link, story.image_prompt_subject);
+        loadStoryImage(id, story.image_url, story.link, story.image_prompt_subject);
       }
       showToast(`Found ${data.stories.length} Seattle stories ✓`, 'success');
     } catch(e) { hideStatus(); showToast('Error: ' + e.message); }
@@ -492,7 +492,7 @@
       if (data.error) throw new Error(data.error);
       hideStatus(); showQueue();
       const id = addCard({ ...data.story, category });
-      fetchOgImage(id, data.story.link, data.story.image_prompt_subject);
+      loadStoryImage(id, data.story.image_url, data.story.link, data.story.image_prompt_subject);
     } catch(e) { hideStatus(); showToast('Error: ' + e.message); }
   }
 
@@ -529,24 +529,38 @@
     return id;
   }
 
-  // ── FETCH OG IMAGE (default) ──
-  async function fetchOgImage(cardId, sourceUrl, aiSubject) {
-    const thumb = document.getElementById('thumb-' + cardId);
-    // store the AI prompt on the card element for later
+  // ── LOAD STORY IMAGE: Claude URL → OG scrape → placeholder ──
+  async function loadStoryImage(cardId, imageUrl, sourceUrl, aiSubject) {
     if (aiSubject) document.getElementById(cardId).dataset.aiPrompt = aiSubject;
-    if (!sourceUrl) { setThumbFallback(cardId, '📰'); return; }
-    try {
-      const res  = await fetch(API, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ action:'fetch_og_image', sourceUrl, token: getToken() })
-      });
-      const data = await res.json();
-      if (data.url) {
-        thumb.innerHTML = `<img src="${data.url}" alt="thumbnail" style="width:100%;height:100%;object-fit:cover;" />`;
-      } else {
-        setThumbFallback(cardId, '📰');
-      }
-    } catch(e) { setThumbFallback(cardId, '📰'); }
+    const thumb = document.getElementById('thumb-' + cardId);
+
+    // 1. Try Claude-provided image URL directly
+    if (imageUrl) {
+      const ok = await testImageUrl(imageUrl);
+      if (ok) { thumb.innerHTML = `<img src="${imageUrl}" alt="thumbnail" style="width:100%;height:100%;object-fit:cover;" />`; return; }
+    }
+
+    // 2. Try OG image scrape from the link
+    if (sourceUrl) {
+      try {
+        const res  = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ action:'fetch_og_image', sourceUrl, token: getToken() }) });
+        const data = await res.json();
+        if (data.url) { thumb.innerHTML = `<img src="${data.url}" alt="thumbnail" style="width:100%;height:100%;object-fit:cover;" />`; return; }
+      } catch(e) {}
+    }
+
+    // 3. Placeholder
+    setThumbFallback(cardId, '📰');
+  }
+
+  function testImageUrl(url) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload  = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
+    });
   }
 
   function getPrompt(cardId) {
