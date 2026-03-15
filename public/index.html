@@ -55,7 +55,7 @@
   .nav-links a:hover { color:var(--amber-glow); }
   .nav-cta { background:var(--amber) !important; color:var(--warm-white) !important; padding:0.45rem 1.2rem !important; border-radius:3px; }
   .nav-cta:hover { background:var(--amber-warm) !important; }
-  .hero { min-height:100vh; position:relative; overflow:hidden; display:grid; grid-template-columns:52% 48%; align-items:stretch; }
+  .hero { min-height:100vh; position:relative; overflow:hidden; display:grid; grid-template-columns:48% 52%; align-items:stretch; }
   .hero-image-bg { position:absolute; inset:0; z-index:0; }
   .hero-image-bg img { width:100%; height:100%; object-fit:cover; object-position:center top; opacity:0.12; filter:saturate(0.7) brightness(0.8); }
   .hero-image-bg::after { content:""; position:absolute; inset:0; background:linear-gradient(100deg,rgba(10,24,27,0.98) 0%,rgba(10,24,27,0.92) 45%,rgba(10,24,27,0.4) 70%,rgba(10,24,27,0.05) 100%); }
@@ -73,9 +73,9 @@
   .hero-proof { display:flex; gap:2.5rem; margin-top:2.5rem; opacity:0; animation:fadeUp 0.7s ease forwards 1s; }
   .proof-num { font-family:'Alfa Slab One',serif; font-size:1.8rem; color:var(--cream); line-height:1; }
   .proof-label { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--mist); margin-top:0.2rem; }
-  .hero-right { position:relative; z-index:5; display:flex; align-items:center; justify-content:center; padding:5rem 3rem 3rem 0; }
-  .hero-right-inner { position:relative; width:100%; opacity:0; animation:fadeIn 1s ease forwards 0.9s; }
-  .hero-right-inner img { width:100%; height:auto; border-radius:6px; box-shadow:-20px 20px 60px rgba(0,0,0,0.75),0 0 0 2px rgba(200,98,42,0.3); }
+  .hero-right { position:relative; z-index:5; display:flex; align-items:center; justify-content:center; padding:6rem 2rem 4rem 1rem; }
+  .hero-right-inner { position:relative; width:100%; max-width:640px; opacity:0; animation:fadeIn 1s ease forwards 0.9s; }
+  .hero-right-inner img { width:100%; height:auto; border-radius:8px; box-shadow:-20px 20px 60px rgba(0,0,0,0.75); }
   .hero-right-caption { position:absolute; bottom:-1.5rem; right:0; font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:rgba(138,172,181,0.45); }
   .stripe { background:var(--amber); padding:0.55rem 3rem; display:flex; align-items:center; gap:1.8rem; overflow:hidden; }
   .stripe-text { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--ink); white-space:nowrap; }
@@ -252,7 +252,7 @@
   <div class="hero-right">
     <div class="hero-right-inner">
       <img src="raincheckbanner.png" alt="Raincheck Seattle — Where the drizzle becomes inspiration" />
-      <div class="hero-right-caption">Vol. 1 — Issue 001 — Seattle, WA</div>
+      <div class="hero-right-caption" id="issue-caption">Vol. 1 — Issue 003 — Seattle, WA</div>
     </div>
   </div>
 </section>
@@ -262,7 +262,7 @@
   <span class="stripe-text">Food · Music · Outdoors · Arts · Family</span><div class="stripe-dot"></div>
   <span class="stripe-text">Every Sunday Morning</span><div class="stripe-dot"></div>
   <span class="stripe-text">Always Free</span><div class="stripe-dot"></div>
-  <span class="stripe-text">Vol. 1 — Issue 001</span>
+  <span class="stripe-text" id="issue-stripe">Vol. 1 — Issue 003</span>
 </div>
 
 <section class="this-week" id="this-week">
@@ -400,6 +400,13 @@
       const data = await res.json();
       const tag = document.getElementById('issue-tag');
       if (tag && data.week_of) tag.textContent = 'Week of ' + data.week_of;
+      if (data.issue) {
+        const num = String(data.issue).padStart(3, '0');
+        const caption = document.getElementById('issue-caption');
+        const stripe  = document.getElementById('issue-stripe');
+        if (caption) caption.textContent = `Vol. 1 — Issue ${num} — Seattle, WA`;
+        if (stripe)  stripe.textContent  = `Vol. 1 — Issue ${num}`;
+      }
       const grid = document.getElementById('story-grid');
       grid.innerHTML = '';
       data.stories.forEach((story, i) => {

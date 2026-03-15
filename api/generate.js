@@ -54,17 +54,22 @@ async function findSeattleStories(res, count = 5) {
       'anthropic-beta': 'web-search-2025-03-05'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 3000,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2500,
+      tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
       system: `You are the editorial voice of Raincheck, Seattle's weekly local newsletter. Today is ${today}.
 Write warm, witty, hyperlocal content based on REAL current Seattle events.
+CRITICAL — DATE RULES (non-negotiable):
+- TODAY is ${today}. NEVER include any event whose end date has already passed.
+- Every story must have at least one occurrence ON OR AFTER today.
+- Target window: today through the next 14 days. Recurring events must have a future occurrence in this window.
+- If an event ended before today, SKIP IT.
 CRITICAL: Only write dates you explicitly found in search results — never guess. Use "dates TBA" if unconfirmed.
-For image_url: find a direct .jpg/.png/.webp URL from the event page, venue site, or news article. Look at og:image tags, press photos, or event banners. Every story needs a real image URL.
+CRITICAL: Cover DIVERSE categories — do NOT repeat the same category twice.
 Return ONLY a valid JSON array — no markdown, no backticks, no explanation.`,
       messages: [{
         role: 'user',
-        content: `Do ONE broad search for "Seattle events this week ${today}" then write ${count} stories covering different categories. For each story find a direct image URL from its source page.
+        content: `Do 2-3 broad web searches for "Seattle events this week ${today}" and "Seattle things to do next week" to find ${count} upcoming stories. All events must start or still be running ON OR AFTER today (${today}). Use each category at most once.
 
 Return ONLY this JSON array:
 [
@@ -73,7 +78,6 @@ Return ONLY this JSON array:
     "headline": "punchy headline max 12 words",
     "body": "2-3 sentences with specific real details.",
     "location": "Neighborhood · timing",
-    "image_url": "direct URL ending in .jpg/.png/.webp from the event/venue — null only if truly none exists",
     "image_prompt_subject": "specific visual for woodblock linocut illustration",
     "image_placeholder": "🍜",
     "link": "real URL to official source — null if none",
@@ -82,12 +86,15 @@ Return ONLY this JSON array:
   }
 ]
 
-Categories: 🍜 Food & Drink, 🎵 Music, 🌸 Outdoors, 🎨 Arts & Culture, 🏪 New Opening, 👨‍👩‍👧 Family, ⚽ Sports, 🎭 Theater`
+Categories to choose from (use each at most once): 🍜 Food & Drink, 🎵 Music, 🌸 Outdoors, 🎨 Arts & Culture, 🏪 New Opening, 👨‍👩‍👧 Family, ⚽ Sports, 🎭 Theater`
       }]
-    })
+    }),
+    signal: AbortSignal.timeout(50000)
   });
 
   const data = await response.json();
+  console.log('Claude response stop_reason:', data.stop_reason, 'blocks:', data.content?.length, 'error:', data.error);
+  if (data.error) throw new Error(`Claude API error: ${data.error.message || JSON.stringify(data.error)}`);
 
   let text = '';
   for (const block of (data.content || [])) {
@@ -96,19 +103,10 @@ Categories: 🍜 Food & Drink, 🎵 Music, 🌸 Outdoors, 🎨 Arts & Culture, �
 
   text = text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
   const match = text.match(/\[[\s\S]*\]/);
-  if (!match) throw new Error('Could not parse stories from response');
+  if (!match) throw new Error(`Could not parse stories. Raw response: ${text.slice(0, 500)}`);
 
   const stories = JSON.parse(match[0]);
-
-  // Fill any missing image_url via Google Image Search (parallel)
-  const withImages = await Promise.all(stories.map(async (story) => {
-    if (story.image_url) return story;
-    const q = `${story.headline} Seattle`;
-    const img = await searchGoogleImage(q);
-    return { ...story, image_url: img || null };
-  }));
-
-  return res.status(200).json({ stories: withImages });
+  return res.status(200).json({ stories });
 }
 
 async function searchGoogleImage(query) {
@@ -132,7 +130,7 @@ async function generateStory(res, { topic, category, neighborhood, context }) {
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 800,
       system: `You are the editorial voice of Raincheck, Seattle's weekly local newsletter.
 Write warm, witty, hyperlocal content. Return ONLY valid JSON, no markdown, no backticks.`,
